@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  quiz Quiz[]
+
+  @@map("users")
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  category    String @unique
+  description String @unique
+
+  quiz Quiz[]
+
+  @@map("categories")
+}
+
+model Quiz {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  categoryId  Int
+  userId      Int
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id])
+
+  quizzyQuestion QuizzyQuestion[]
+
+  @@map("quizzies")
+}
+
+model QuizzyQuestion {
+  id         Int @id @default(autoincrement())
+  quizId     Int @db.Integer
+  questionId Int @db.Integer
+
+  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@map("quiz_questions")
+}
+
+model Question {
+  id              Int              @id @default(autoincrement())
+  title           String           @unique
+  question        String
+  response        String
+  quizzyQuestions QuizzyQuestion[] @relation
+
+  @@map("questions")
+}
