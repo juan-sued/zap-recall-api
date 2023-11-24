@@ -1,5 +1,5 @@
 import { usersInterface } from '@/interfaces';
-import {  UpdateUserData, UsersBasic } from '@/interfaces/userInterfaces ';
+import { UpdateUserData, UsersBasic } from '@/interfaces/users';
 import { usersRepository } from '@/repositories';
 import { errorFactory } from '@/utils';
 import { User } from '@prisma/client';
@@ -57,9 +57,7 @@ function removeEmptyProperties<T>(obj: T): T {
 }
 
 export {
-  getAllUsers,
-  getUserByName,
-  updateUserService,
-  deleteUserService,
-  getUserById
+  deleteUserService, getAllUsers, getUserById, getUserByName,
+  updateUserService
 };
+

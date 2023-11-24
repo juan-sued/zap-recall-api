@@ -1,5 +1,5 @@
+import { UpdateCategoriesData } from '@/interfaces/categories';
 import { categoriesRepository } from '@/repositories';
-import { UpdateCategoriesData } from '@/interfaces/categoriesInterfaces';
 import { errorFactory } from '@/utils';
 import { Category } from '@prisma/client';
 
@@ -40,10 +40,6 @@ async function deleteCategories(id: number) {
 }
 
 export {
-  deleteCategories,
-  updateCategories,
-  getCategoriesByName,
-  getCategoriesById,
-  getAllCategories,
-  insertCategories,
+    deleteCategories, getAllCategories, getCategoriesById, getCategoriesByName, insertCategories, updateCategories
 };
+

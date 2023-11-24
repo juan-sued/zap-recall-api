@@ -1,3 +1,5 @@
-export * as categoriesInterface from './categoriesInterfaces'
-export * as authInterface from './authInterfaces'
-export * as usersInterface from './userInterfaces '
+export * as authInterface from './auth'
+export * as categoriesInterface from './categories'
+export * as quizzesInterface from './quizzes'
+export * as usersInterface from './users'
+

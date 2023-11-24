@@ -1,7 +1,7 @@
-import { Prisma, User } from '@prisma/client';
 import { prisma } from '@/config';
-import { ISignUp } from '@/interfaces/authInterfaces';
-import { UpdateUserData, UsersBasic } from '@/interfaces/userInterfaces ';
+import { ISignUp } from '@/interfaces/auth';
+import { UpdateUserData, UsersBasic } from '@/interfaces/users';
+import { Prisma, User } from '@prisma/client';
 
 //=================== GET =====================//
 function getUserByEmail(email: string) {
@@ -114,13 +114,6 @@ async function deleteUser(id: number) {
 }
 
 export {
-  getUserByEmail,
-  insertUser,
-  getUserOrAdministratorById,
-  getAllUsers,
-  getUsersByFilterName,
-  getAllAdministrators,
-  getAdministratorsByFilterName,
-  updateUser,
-  deleteUser,
+  deleteUser, getAdministratorsByFilterName, getAllAdministrators, getAllUsers, getUserByEmail, getUserOrAdministratorById, getUsersByFilterName, insertUser, updateUser
 };
+
