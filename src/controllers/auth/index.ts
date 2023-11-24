@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { ISign, ISignUp } from '@/interfaces/authInterfaces';
+import { ISign, ISignUp } from '@/interfaces/auth';
 import { authService } from '@/services';
 
  async function registerUserController(request: Request, response: Response) {
@@ -30,7 +30,6 @@ type LoginResponse = {
 
 
 export {
-  registerUserController,
-  loginUserController
+  loginUserController, registerUserController
+};
 
-}

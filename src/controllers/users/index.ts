@@ -1,4 +1,4 @@
-import { ResponseAllUsers } from '@/interfaces/userInterfaces '
+import { ResponseAllUsers } from '@/interfaces/users'
 import { usersService } from '@/services'
 import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'

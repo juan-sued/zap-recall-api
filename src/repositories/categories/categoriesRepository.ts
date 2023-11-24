@@ -1,6 +1,6 @@
-import { Prisma, Category } from '@prisma/client';
 import { prisma } from '@/config';
-import { UpdateCategoriesData } from '@/interfaces/categoriesInterfaces';
+import { UpdateCategoriesData } from '@/interfaces/categories';
+import { Category, Prisma } from '@prisma/client';
 
 //=================== GET =====================//
 
@@ -69,11 +69,7 @@ async function deleteCategories(id: number) {
 }
 
 export {
-  insertCategories,
-  getCategoriesById,
-  getAllCategories,
-  getCategoriesByFilterName,
-  updateCategories,
-  deleteCategories,
-  getCategoriesWithStock,
+    deleteCategories, getAllCategories,
+    getCategoriesByFilterName, getCategoriesById, getCategoriesWithStock, insertCategories, updateCategories
 };
+

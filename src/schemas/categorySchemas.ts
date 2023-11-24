@@ -6,7 +6,8 @@ const categorySchema = Joi.object({
 });
 const categoryUpdateSchema = Joi.object({
   name: Joi.string(),
-  description: Joi.string(),
+  description: Joi.string()
 });
 
 export { categorySchema, categoryUpdateSchema };
+
