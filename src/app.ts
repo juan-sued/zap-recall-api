@@ -1,9 +1,8 @@
-import 'reflect-metadata';
-import 'express-async-errors';
-import express, { Express, json } from 'express';
-import { errorHandlerMiddleware } from './errors';
 import cors from 'cors';
-import { connectDb, disconnectDB, loadEnv } from './config';
+import express, { Express, json } from 'express';
+import 'express-async-errors';
+import 'reflect-metadata';
+import { errorHandlerMiddleware } from './errors';
 
 
 const app = express();
@@ -11,7 +10,7 @@ const app = express();
 app
   .use(cors())
   .use(json())
-  .get('/health', (_req, res) => res.send('OK!'))
+  .get('/health', (_req, res) => res.send(`OK! Ambiente: ${process.env.NODE_ENV}`))
 
   .use(errorHandlerMiddleware);
 

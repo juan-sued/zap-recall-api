@@ -7,9 +7,7 @@ const prisma = new PrismaClient()
 async function main() {
   let userDB = await prisma.user.findFirst()
 
-  if (userDB === null) {
-      console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa',userDB)
-
+  if (!userDB) {
 
       const mockUser: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'phone'> = {
         name: 'Juan Sued',
