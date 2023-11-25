@@ -69,7 +69,7 @@ async function deleteCategories(id: number) {
 }
 
 export {
-    deleteCategories, getAllCategories,
-    getCategoriesByFilterName, getCategoriesById, getCategoriesWithStock, insertCategories, updateCategories
+  deleteCategories, getAllCategories,
+  getCategoriesByFilterName, getCategoriesById, getCategoriesWithStock, insertCategories, updateCategories
 };
 

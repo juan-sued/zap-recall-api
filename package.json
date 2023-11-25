@@ -6,7 +6,6 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tspc -p tsconfig.build.json",
-    "prepare": "husky install",
     "start": "node ./dist/server.js",
     "seed": "npm run prod:load-envs prisma db seed",
     "migration:run": "prisma migrate deploy",
@@ -59,6 +58,7 @@
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
     "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
     "prisma": "^5.6.0",
     "ts-node": "^10.9.1",
     "ts-patch": "^3.0.2",

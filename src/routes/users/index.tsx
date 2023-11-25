@@ -1,11 +1,8 @@
-import { usersController } from "@/controllers";
-import { Router } from "express";
+import { usersController } from '@/controllers'
+import { Router } from 'express'
 
+const usersRouter = Router()
 
-const usersRouter = Router();
+usersRouter.get('/', usersController.getUser)
 
-usersRouter
-  .get('/', usersController.getUsers)
-
-
-export { usersRouter };
+export { usersRouter }

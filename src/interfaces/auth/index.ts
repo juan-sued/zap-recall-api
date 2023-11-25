@@ -1,9 +1,9 @@
-import { User } from '@prisma/client';
+import { User } from '@prisma/client'
 
 export interface ISign extends Pick<User, 'email' | 'password'> {
-  confirmPassword?: string;
+  confirmPassword?: string
 }
 
 export interface ISignUp extends Pick<User, 'name' | 'email' | 'password'> {
-  confirmPassword?: string;
+  confirmPassword?: string
 }

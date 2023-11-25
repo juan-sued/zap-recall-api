@@ -83,10 +83,6 @@ async function main() {
   if(!quizDB) await quizzesService.insertQuiz({ quizMock }, 2)
 
 
-
-
-
-
 }
 
 main()

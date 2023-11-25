@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-let prisma: PrismaClient;
+let prisma: PrismaClient
 
 function connectDb(): void {
   prisma = new PrismaClient({
     log: ['info', 'warn', 'error'],
-  });
+  })
 }
 
 async function disconnectDB(): Promise<void> {
-  await prisma?.$disconnect();
+  await prisma?.$disconnect()
 }
 
-export { prisma, connectDb, disconnectDB };
+export { connectDb, disconnectDB, prisma }

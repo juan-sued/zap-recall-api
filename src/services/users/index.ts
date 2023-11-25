@@ -1,63 +1,68 @@
-import { usersInterface } from '@/interfaces';
-import { UpdateUserData, UsersBasic } from '@/interfaces/users';
-import { usersRepository } from '@/repositories';
-import { errorFactory } from '@/utils';
-import { User } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { usersInterface } from '@/interfaces'
+import { UpdateUserData, UsersBasic } from '@/interfaces/users'
+import { usersRepository } from '@/repositories'
+import { errorFactory } from '@/utils'
+import { User } from '@prisma/client'
+import bcrypt from 'bcrypt'
 
 async function getAllUsers(): Promise<usersInterface.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getAllUsers();
+  const users: UsersBasic[] = await usersRepository.getAllUsers()
 
   return {
-    users: users,
-  };
+    users,
+  }
 }
 
-async function getUserByName(name: string): Promise<usersInterface.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getUsersByFilterName(name);
+async function getUserByName(
+  name: string,
+): Promise<usersInterface.ResponseAllUsers> {
+  const users: UsersBasic[] = await usersRepository.getUsersByFilterName(name)
 
   return {
-    users: users,
-  };
+    users,
+  }
 }
 
-async function getUserById(id: number): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
-  const user: User = await usersRepository.getUserOrAdministratorById(id);
-  return user;
+async function getUserById(
+  id: number,
+): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
+  const user: User = await usersRepository.getUserOrAdministratorById(id)
+  return user
 }
 
 async function updateUserService(id: number, updateUserData: UpdateUserData) {
   if (updateUserData.password) {
-    const passwordCripted = await bcrypt.hash(updateUserData.password, 10);
-    updateUserData.password = passwordCripted;
+    const passwordCripted = await bcrypt.hash(updateUserData.password, 10)
+    updateUserData.password = passwordCripted
   }
 
-  await usersRepository.updateUser(id, updateUserData);
-
-  return;
+  await usersRepository.updateUser(id, updateUserData)
 }
 
 async function deleteUserService(id: number) {
-  if (!id) throw errorFactory.unprocessableEntity(['id inexistent']);
-  await usersRepository.deleteUser(id);
+  if (!id) throw errorFactory.unprocessableEntity(['id inexistent'])
+  await usersRepository.deleteUser(id)
 }
 
 function removeEmptyProperties<T>(obj: T): T {
-  for (let key in obj) {
+  for (const key in obj) {
     if (typeof obj[key] === 'object' && obj[key] !== null) {
-      removeEmptyProperties(obj[key]);
+      removeEmptyProperties(obj[key])
       if (Object.keys(obj[key]).length === 0) {
-        delete obj[key];
+        delete obj[key]
       }
     } else if (obj[key] === '') {
-      delete obj[key];
+      delete obj[key]
     }
   }
-  return obj;
+  return obj
 }
 
 export {
-  deleteUserService, getAllUsers, getUserById, getUserByName,
+  deleteUserService,
+  getAllUsers,
+  getUserById,
+  getUserByName,
   updateUserService
-};
+}
 
