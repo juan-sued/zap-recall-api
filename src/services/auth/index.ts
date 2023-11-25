@@ -4,20 +4,7 @@ import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { createToken } from './jwtToken'
 
-async function signInService(userInDB: User) {
-  const token = createToken(userInDB.id)
-
-  return {
-    user: {
-      id: userInDB.id,
-      name: userInDB.name,
-      email: userInDB.email
-    },
-    token
-  }
-}
-
-async function signUpService({
+async function signUp({
   email,
   name,
   password,
@@ -33,4 +20,17 @@ async function signUpService({
   })
 }
 
-export { signInService, signUpService }
+async function signIn(userInDB: User) {
+  const token = createToken(userInDB.id)
+
+  return {
+    user: {
+      id: userInDB.id,
+      name: userInDB.name,
+      email: userInDB.email
+    },
+    token
+  }
+}
+
+export { signIn, signUp }
