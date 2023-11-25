@@ -19,10 +19,9 @@ async function signInService(userLogin: ISign, userInDB: User) {
     user: {
       id: userInDB.id,
       name: userInDB.name,
-
-      email: userInDB.email,
+      email: userInDB.email
     },
-    token,
+    token
   }
 }
 
@@ -30,14 +29,14 @@ async function signUpService({
   email,
   name,
   password,
-  confirmPassword,
+  confirmPassword
 }: ISignUp): Promise<User> {
   password = await bcrypt.hash(password, 10)
   return await usersRepository.insertUser({
     email,
     name,
     password,
-    confirmPassword,
+    confirmPassword
   })
 }
 

@@ -32,7 +32,7 @@ async function getCategoriesById(id: number): Promise<Category> {
 
 async function updateCategories(
   id: number,
-  updateCategoriesData: UpdateCategoriesData,
+  updateCategoriesData: UpdateCategoriesData
 ) {
   await categoriesRepository.updateCategories(id, updateCategoriesData)
 }
@@ -49,4 +49,3 @@ export {
   insertCategories,
   updateCategories
 }
-
