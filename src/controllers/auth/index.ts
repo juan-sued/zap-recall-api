@@ -1,32 +1,21 @@
+import { authInterfaces } from '@/interfaces'
+import { authService } from '@/services'
 import { Request, Response } from 'express'
 
-import { ISign, ISignUp } from '@/interfaces/auth'
-import { authService } from '@/services'
-
-async function registerUserController(request: Request, response: Response) {
-  const newUser: ISignUp = request.body
+async function signUp(request: Request, response: Response) {
+  const newUser: authInterfaces.ISignUp = request.body
 
   await authService.signUpService(newUser)
 
   response.sendStatus(201)
 }
 
-type LoginResponse = {
-  user: {
-    id: number
-    name: string
-  }
-  token: string
-}
-
-async function loginUserController(request: Request, response: Response) {
-  const userLogin: ISign = request.body
+async function signIn(request: Request, response: Response) {
   const { userInDB } = response.locals
-  const loginResponse: LoginResponse = await authService.signInService(
-    userLogin,
-    userInDB,
-  )
+
+  const loginResponse: authInterfaces.ISignInResponse =
+    await authService.signInService(userInDB)
   response.status(200).send(loginResponse)
 }
 
-export { loginUserController, registerUserController }
+export { signIn, signUp }

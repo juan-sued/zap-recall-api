@@ -1,19 +1,11 @@
-import { ISign, ISignUp } from '@/interfaces/auth'
+import { ISignUp } from '@/interfaces/auth'
 import { usersRepository } from '@/repositories'
-import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { createToken } from './jwtToken'
 
-async function signInService(userLogin: ISign, userInDB: User) {
-  const dbPassword = userInDB?.password ?? ''
-
-  const isValidPassword = await bcrypt.compare(userLogin.password, dbPassword)
-
-  if (!isValidPassword) throw errorFactory.forbidden()
-
-  const userId = Number(userInDB?.id) ?? 0
-  const token = createToken(userId)
+async function signInService(userInDB: User) {
+  const token = createToken(userInDB.id)
 
   return {
     user: {
@@ -32,7 +24,8 @@ async function signUpService({
   confirmPassword
 }: ISignUp): Promise<User> {
   password = await bcrypt.hash(password, 10)
-  return await usersRepository.insertUser({
+
+  return await usersRepository.insert({
     email,
     name,
     password,
