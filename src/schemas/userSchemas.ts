@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from 'joi'
 
 const userUpdateSchema = Joi.object({
   name: Joi.string().trim().min(1),
@@ -6,7 +6,7 @@ const userUpdateSchema = Joi.object({
   password: Joi.string().trim().min(1),
   typeOfUserId: Joi.number().min(0),
   cpf: Joi.string().trim().min(11),
-  phone: Joi.string().trim().min(11),
-});
+  phone: Joi.string().trim().min(11)
+})
 
-export { userUpdateSchema };
+export { userUpdateSchema }

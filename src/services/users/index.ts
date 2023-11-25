@@ -9,22 +9,22 @@ async function getAllUsers(): Promise<usersInterface.ResponseAllUsers> {
   const users: UsersBasic[] = await usersRepository.getAllUsers()
 
   return {
-    users,
+    users
   }
 }
 
 async function getUserByName(
-  name: string,
+  name: string
 ): Promise<usersInterface.ResponseAllUsers> {
   const users: UsersBasic[] = await usersRepository.getUsersByFilterName(name)
 
   return {
-    users,
+    users
   }
 }
 
 async function getUserById(
-  id: number,
+  id: number
 ): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
   const user: User = await usersRepository.getUserOrAdministratorById(id)
   return user
@@ -44,20 +44,6 @@ async function deleteUserService(id: number) {
   await usersRepository.deleteUser(id)
 }
 
-function removeEmptyProperties<T>(obj: T): T {
-  for (const key in obj) {
-    if (typeof obj[key] === 'object' && obj[key] !== null) {
-      removeEmptyProperties(obj[key])
-      if (Object.keys(obj[key]).length === 0) {
-        delete obj[key]
-      }
-    } else if (obj[key] === '') {
-      delete obj[key]
-    }
-  }
-  return obj
-}
-
 export {
   deleteUserService,
   getAllUsers,
@@ -65,4 +51,3 @@ export {
   getUserByName,
   updateUserService
 }
-
