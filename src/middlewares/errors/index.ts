@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 function errorHandlerMiddleware(
   error: ErrorEvent,
   _req: Request,
-  response: Response,
+  response: Response
 ) {
   switch (error.type) {
     case 'error_unprocessable_entity':

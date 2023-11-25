@@ -4,7 +4,7 @@ import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'
 import { Request, Response } from 'express'
 
-async function getUser(request: Request, response: Response) {
+async function get(request: Request, response: Response) {
   const { name } = request.query as Record<string, string>
   const { idParams } = response.locals
   let result: ResponseAllUsers | Omit<User, 'id' | 'password' | 'updatedAt'>
@@ -20,7 +20,7 @@ async function getUser(request: Request, response: Response) {
   response.status(200).send(result)
 }
 
-async function updateUser(request: Request, response: Response) {
+async function update(request: Request, response: Response) {
   const { idUser } = response.locals
   const updateUserData = request.body
   console.log(idUser, updateUserData)
@@ -29,7 +29,7 @@ async function updateUser(request: Request, response: Response) {
   response.sendStatus(200)
 }
 
-async function deleteUser(request: Request, response: Response) {
+async function exclude(request: Request, response: Response) {
   const { idUser } = response.locals
 
   await usersService.deleteUserService(idUser)
@@ -37,4 +37,4 @@ async function deleteUser(request: Request, response: Response) {
   response.sendStatus(200)
 }
 
-export { deleteUser, getUser, updateUser }
+export { exclude, get, update }

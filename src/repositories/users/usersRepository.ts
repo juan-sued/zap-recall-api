@@ -1,119 +1,78 @@
-import { prisma } from '@/config';
-import { ISignUp } from '@/interfaces/auth';
-import { UpdateUserData, UsersBasic } from '@/interfaces/users';
-import { Prisma, User } from '@prisma/client';
+import { prisma } from '@/config'
+import { ISignUp } from '@/interfaces/auth'
+import { UpdateUserData, UsersBasic } from '@/interfaces/users'
+import { errorFactory } from '@/utils'
+import { Prisma, User } from '@prisma/client'
 
-//=================== GET =====================//
-function getUserByEmail(email: string) {
+//= ================== GET =====================//
+
+async function getAll(): Promise<UsersBasic[]> {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true
+    }
+  })
+
+  return users
+}
+function getByEmail(email: string) {
   const params: Prisma.UserFindUniqueArgs = {
     where: {
-      email,
-    },
-    include: {
+      email
+    }
+  }
 
-    },
-  };
-
-  return prisma.user.findUnique(params);
+  return prisma.user.findUnique(params)
 }
 
-async function getUserOrAdministratorById(id: number): Promise<User> {
+async function getById(id: number): Promise<User> {
   const user = await prisma.user.findUnique({
     where: {
-      id,
+      id
     },
-    include: {
+    include: {}
+  })
 
-    },
-  });
-
-  delete user['password'];
-  return user;
-}
-async function getAllUsers(): Promise<UsersBasic[]> {
-  const users = await prisma.user.findMany({
-    where: {
-    },
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-    },
-  });
-
-  return users;
+  delete user.password
+  return user
 }
 
-function getAllAdministrators(): Promise<UsersBasic[]> {
-  const params: Prisma.UserFindManyArgs = {
-    where: {
-    },
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-    },
-  };
-  return prisma.user.findMany(params);
-}
-
-function getUsersByFilterName(name: string): Promise<UsersBasic[]> {
+function getByFilterName(name: string): Promise<UsersBasic[]> {
   const params: Prisma.UserFindManyArgs = {
     where: {
       name: {
         startsWith: `${name}`,
-        mode: 'insensitive',
-      },
+        mode: 'insensitive'
+      }
     },
     skip: 0,
-    take: undefined,
-  };
+    take: undefined
+  }
 
-  return prisma.user.findMany(params);
+  return prisma.user.findMany(params)
 }
 
-function getAdministratorsByFilterName(name: string): Promise<UsersBasic[]> {
-  return prisma.user.findMany({
-    where: {
-      name: {
-        startsWith: `${name}`,
-        mode: 'insensitive',
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-    },
-    skip: 0,
-    take: undefined,
-  });
+//= ================ INSERT ===================//
+
+async function insert(newUser: ISignUp) {
+  delete newUser.confirmPassword
+  return await prisma.user.create({ data: newUser })
 }
 
-//================= INSERT ===================//
+//= ================ UPDATE ===================//
 
-async function insertUser(newUser: ISignUp) {
-  delete newUser.confirmPassword;
-  return await prisma.user.create({ data: newUser });
-}
-
-//================= UPDATE ===================//
-
-async function updateUser(id: number, updateUserData: UpdateUserData) {
-  console.log(updateUserData);
+async function update(id: number, updateUserData: UpdateUserData) {
   const resultUsers = await prisma.user.update({
     where: { id },
-    data: updateUserData,
-  });
+    data: updateUserData
+  })
 
-  if (!resultUsers) throw { type: 'error' };
+  if (!resultUsers) throw errorFactory.notFound('User')
 }
 
-async function deleteUser(id: number) {
-  await prisma.user.delete({ where: { id: id } });
+async function exclude(id: number) {
+  await prisma.user.delete({ where: { id } })
 }
 
-export {
-  deleteUser, getAdministratorsByFilterName, getAllAdministrators, getAllUsers, getUserByEmail, getUserOrAdministratorById, getUsersByFilterName, insertUser, updateUser
-};
-
+export { exclude, getAll, getByEmail, getByFilterName, getById, insert, update }

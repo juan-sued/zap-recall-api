@@ -1,11 +1,13 @@
 import { Question } from '@prisma/client'
 
-export type NewQuestion = Omit<Question, 'id'>
+type NewQuestion = Omit<Question, 'id'>
 
-export interface INewQuiz {
+interface INewQuiz {
   title: string
   description: string
   categoryId: number
   newCategory: string
   questions: NewQuestion[]
 }
+
+export { INewQuiz, NewQuestion }

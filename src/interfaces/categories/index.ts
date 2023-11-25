@@ -1,7 +1,9 @@
 //= ================ update ====================
 
-export interface UpdateCategoriesData {
+interface UpdateCategoriesData {
   id?: number
   name?: string
   description?: string
 }
+
+export { UpdateCategoriesData }
