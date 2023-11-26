@@ -1,50 +1,43 @@
+import { categoriesController } from '@/controllers'
 import {
-  deleteCategories,
-  getCategories,
-  insertCategories,
-  updateCategories
-} from '@/controllers/categories/categoriesController'
-import {
-  validateIdParamsMiddleware,
-  validateJwtTokenMiddleware,
-  validateSchemaMiddleware
+  authMiddleware,
+  categoriesMiddleware,
+  schemaMiddleware,
+  sharedMiddleware
 } from '@/middlewares'
-import {
-  validateConflictCategoriesMiddleware,
-  validateNotFoundCategoriesMiddleware
-} from '@/middlewares/categories'
+
 import { categorySchema, categoryUpdateSchema } from '@/schemas/categorySchemas'
 import { Router } from 'express'
 
 const categoriesRouter = Router()
 
 categoriesRouter
-  .get('/', getCategories)
-  .all('/*', validateJwtTokenMiddleware)
-  .post(
-    '/',
-    validateSchemaMiddleware(categorySchema),
-    validateConflictCategoriesMiddleware,
-    insertCategories
-  )
+  .get('/', categoriesController.get)
+  .all('/*', authMiddleware.validateJwtToken)
   .get(
     '/:id',
-    validateIdParamsMiddleware,
-    validateNotFoundCategoriesMiddleware,
-    getCategories
+    sharedMiddleware.validateIdParams,
+    categoriesMiddleware.validateNotFound,
+    categoriesController.get
+  )
+  .post(
+    '/',
+    schemaMiddleware.validateSchema(categorySchema),
+    categoriesMiddleware.validateConflict,
+    categoriesController.insert
   )
   .patch(
     '/:id',
-    validateIdParamsMiddleware,
-    validateNotFoundCategoriesMiddleware,
-    validateSchemaMiddleware(categoryUpdateSchema),
-    updateCategories
+    sharedMiddleware.validateIdParams,
+    categoriesMiddleware.validateNotFound,
+    schemaMiddleware.validateSchema(categoryUpdateSchema),
+    categoriesController.update
   )
   .delete(
     '/:id',
-    validateIdParamsMiddleware,
-    validateNotFoundCategoriesMiddleware,
-    deleteCategories
+    sharedMiddleware.validateIdParams,
+    categoriesMiddleware.validateNotFound,
+    categoriesController.exclude
   )
 
 export { categoriesRouter }

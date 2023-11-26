@@ -2,11 +2,9 @@ import dotenv from 'dotenv'
 
 import { NextFunction, Request, Response } from 'express'
 
-import { authInterfaces } from '@/interfaces'
 import { usersRepository } from '@/repositories'
 import { decodedToken } from '@/services/auth/jwtToken'
 import { errorFactory } from '@/utils/index'
-import bcrypt from 'bcrypt'
 
 dotenv.config()
 
@@ -52,7 +50,6 @@ const validateConflictByEmail = async (
   next: NextFunction
 ) => {
   const { email } = request.body
-
   const isRegisteredUser = await usersRepository.getByEmail(email)
 
   if (isRegisteredUser) throw errorFactory.conflict('User')
@@ -62,29 +59,4 @@ const validateConflictByEmail = async (
   next()
 }
 
-const validatePassword = async (
-  request: Request,
-  response: Response,
-  next: NextFunction
-) => {
-  const userLogin: authInterfaces.ISign = request.body
-
-  const { userInDB } = response.locals
-
-  const dbPassword = userInDB.password ?? ''
-
-  const isValidPassword = await bcrypt.compare(userLogin.password, dbPassword)
-
-  if (!isValidPassword) throw errorFactory.forbidden()
-
-  response.locals.user = request.body
-
-  next()
-}
-
-export {
-  validateConflictByEmail,
-  validateJwtToken,
-  validateNotFoundByEmail,
-  validatePassword
-}
+export { validateConflictByEmail, validateJwtToken, validateNotFoundByEmail }

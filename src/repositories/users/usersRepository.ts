@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { ISignUp } from '@/interfaces/auth'
+import { authInterfaces } from '@/interfaces'
 import { UpdateUserData, UsersBasic } from '@/interfaces/users'
 import { errorFactory } from '@/utils'
 import { Prisma, User } from '@prisma/client'
@@ -16,6 +16,7 @@ async function getAll(): Promise<UsersBasic[]> {
 
   return users
 }
+
 function getByEmail(email: string) {
   const params: Prisma.UserFindUniqueArgs = {
     where: {
@@ -55,8 +56,7 @@ function getByFilterName(name: string): Promise<UsersBasic[]> {
 
 //= ================ INSERT ===================//
 
-async function insert(newUser: ISignUp) {
-  delete newUser.confirmPassword
+async function insert(newUser: authInterfaces.ISignUpRequest) {
   return await prisma.user.create({ data: newUser })
 }
 

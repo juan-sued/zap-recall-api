@@ -9,8 +9,7 @@ const validateNotFound = async (
 ) => {
   const { idParams } = response.locals
 
-  const isRegisteredUsers =
-    await usersRepository.getUserOrAdministratorById(idParams)
+  const isRegisteredUsers = await usersRepository.getById(idParams)
 
   if (!isRegisteredUsers) throw errorFactory.notFound('User')
 

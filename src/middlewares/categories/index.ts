@@ -2,7 +2,7 @@ import { categoriesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { NextFunction, Request, Response } from 'express'
 
-const validateConflictCategoriesMiddleware = async (
+const validateConflict = async (
   request: Request,
   response: Response,
   next: NextFunction
@@ -11,7 +11,7 @@ const validateConflictCategoriesMiddleware = async (
   if (!name) throw errorFactory.unprocessableEntity(['name inexistent'])
 
   const isRegisteredCategories =
-    await categoriesRepository.getCategoriesByFilterName(name)
+    await categoriesRepository.getByFilterName(name)
   console.log(isRegisteredCategories)
 
   if (isRegisteredCategories.length > 0)
@@ -21,24 +21,20 @@ const validateConflictCategoriesMiddleware = async (
 
   next()
 }
-const validateNotFoundCategoriesMiddleware = async (
+const validateNotFound = async (
   request: Request,
   response: Response,
   next: NextFunction
 ) => {
   const { idParams } = response.locals
 
-  const isRegisteredCategories =
-    await categoriesRepository.getCategoriesById(idParams)
+  const isRegisteredCategories = await categoriesRepository.getById(idParams)
 
-  if (!isRegisteredCategories) throw errorFactory.notFound('Categories')
+  if (!isRegisteredCategories) throw errorFactory.notFound('Category')
 
   response.locals.category = isRegisteredCategories
 
   next()
 }
 
-export {
-  validateConflictCategoriesMiddleware,
-  validateNotFoundCategoriesMiddleware
-}
+export { validateConflict, validateNotFound }

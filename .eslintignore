@@ -21,6 +21,10 @@ nginx.conf
 **/config/index.ts
 **/routes/index.ts
 **/utils/index.ts
+**/entities/index.ts
+
+/tests/factories/index.ts
+
 
 
 

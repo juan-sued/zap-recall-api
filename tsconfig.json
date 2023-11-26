@@ -4,14 +4,12 @@
     "module": "NodeNext",
     "outDir": "dist",
     "esModuleInterop": true,
-
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitAny": true,
-    "jsx": "react",
     "rootDirs": [
       "src",
-      "tests"
+      "tests",
     ],
     "baseUrl": "src",
     "paths": {
