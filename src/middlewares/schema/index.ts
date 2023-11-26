@@ -2,7 +2,7 @@ import { errorFactory } from '@/utils'
 import { NextFunction, Request, Response } from 'express'
 import { Schema } from 'joi'
 
-const validateSchemaMiddleware = (schema: Schema) => {
+const validateSchema = (schema: Schema) => {
   return (request: Request, response: Response, next: NextFunction) => {
     const body: object = request.body
     const { error } = schema.validate(body, { abortEarly: false })
@@ -17,4 +17,4 @@ const validateSchemaMiddleware = (schema: Schema) => {
   }
 }
 
-export { validateSchemaMiddleware }
+export { validateSchema }

@@ -1,10 +1,8 @@
 import { User } from '@prisma/client'
 
-interface ISign extends Pick<User, 'email' | 'password'> {
-  confirmPassword?: string
-}
+type ISignInRequest = Pick<User, 'id' | 'name' | 'email' | 'password'>
 
-interface ISignUp extends Pick<User, 'name' | 'email' | 'password'> {
+interface ISignUpRequest extends Pick<User, 'name' | 'email' | 'password'> {
   confirmPassword?: string
 }
 
@@ -16,4 +14,4 @@ interface ISignInResponse {
   token: string
 }
 
-export { ISign, ISignInResponse, ISignUp }
+export { ISignInRequest, ISignInResponse, ISignUpRequest }

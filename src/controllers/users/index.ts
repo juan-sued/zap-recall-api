@@ -9,9 +9,9 @@ async function get(request: Request, response: Response) {
   const { idParams } = response.locals
   let result: ResponseAllUsers | Omit<User, 'id' | 'password' | 'updatedAt'>
 
-  if (name) result = await usersService.getUserByName(name)
+  if (name) result = await usersService.getByName(name)
 
-  if (idParams) result = await usersService.getUserById(idParams)
+  if (idParams) result = await usersService.getById(idParams)
 
   if (!name && !idParams) result = await usersService.getAllUsers()
 

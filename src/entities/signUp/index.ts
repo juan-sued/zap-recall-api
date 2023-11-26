@@ -1,7 +1,7 @@
-import { ISignUp } from '@/interfaces/auth'
+import { authInterfaces } from '@/interfaces'
 
 export class SignUp {
-  private props: ISignUp
+  private props: authInterfaces.ISignUpRequest
 
   // Getters
   get name() {
@@ -20,7 +20,7 @@ export class SignUp {
     return this.props.confirmPassword
   }
 
-  constructor(props: ISignUp) {
+  constructor(props: authInterfaces.ISignUpRequest) {
     const { password, confirmPassword } = props
 
     if (password !== confirmPassword) {

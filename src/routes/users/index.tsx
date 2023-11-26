@@ -11,12 +11,12 @@ import { Router } from 'express'
 const usersRouter = Router()
 
 usersRouter
-  .all('*', authMiddleware.validateJwtTokenMiddleware)
+  .all('*', authMiddleware.validateJwtToken)
   .get('/', usersController.get)
-  .get('/:id', sharedMiddleware.validateIdParamsMiddleware, usersController.get)
+  .get('/:id', sharedMiddleware.validateIdParams, usersController.get)
   .patch(
     '/',
-    schemaMiddleware.validateSchemaMiddleware(userSchemas.userUpdateSchema),
+    schemaMiddleware.validateSchema(userSchemas.userUpdateSchema),
     usersController.update
   )
   .delete('/', usersController.exclude)

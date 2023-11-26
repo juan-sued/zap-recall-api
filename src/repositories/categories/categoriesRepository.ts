@@ -1,75 +1,62 @@
-import { prisma } from '@/config';
-import { UpdateCategoriesData } from '@/interfaces/categories';
-import { Category, Prisma } from '@prisma/client';
+import { prisma } from '@/config'
+import { UpdateCategoriesData } from '@/interfaces/categories'
+import { Category, Prisma } from '@prisma/client'
 
-//=================== GET =====================//
+//= ================== GET =====================//
 
-function getAllCategories(): Promise<Category[]> {
-  const params: Prisma.CategoryFindManyArgs = {};
+function getAll(): Promise<Category[]> {
+  const params: Prisma.CategoryFindManyArgs = {}
 
-  return prisma.category.findMany(params);
+  return prisma.category.findMany(params)
 }
-async function getCategoriesById(id: number): Promise<Category> {
+async function getById(id: number): Promise<Category> {
   const category = await prisma.category.findUnique({
     where: {
-      id,
-    },
-  });
+      id
+    }
+  })
 
-  return category;
+  return category
 }
 
-function getCategoriesWithStock(): Promise<Category[]> {
-  const params: Prisma.CategoryFindManyArgs = {
-    include: {
-
-    },
-  };
-
-  return prisma.category.findMany(params);
-}
-function getCategoriesByFilterName(name: string): Promise<Category[]> {
+function getByFilterName(name: string): Promise<Category[]> {
   const params: Prisma.CategoryFindManyArgs = {
     where: {
-      category: {
+      title: {
         startsWith: `${name}`,
-        mode: 'insensitive',
-      },
+        mode: 'insensitive'
+      }
     },
     skip: 0,
-    take: undefined,
-  };
+    take: undefined
+  }
 
-  return prisma.category.findMany(params);
+  return prisma.category.findMany(params)
 }
 
-//================= INSERT ===================//
+//= ================ INSERT ===================//
 
-async function insertCategories(newCategories: Category) {
+async function insert(newCategories: Category) {
   await prisma.category.create({
-    data: newCategories,
-  });
+    data: newCategories
+  })
 }
 
-//================= UPDATE ===================//
+//= ================ UPDATE ===================//
 
-async function updateCategories(id: number, updateCategoriesData: UpdateCategoriesData) {
+async function update(id: number, updateCategoriesData: UpdateCategoriesData) {
   const params: Prisma.CategoryUpdateArgs = {
     where: { id },
-    data: updateCategoriesData,
-  };
+    data: updateCategoriesData
+  }
 
-  await prisma.category.update(params);
+  await prisma.category.update(params)
 }
 
-//================= DELETE ===================//
+//= ================ exclude ===================//
 
-async function deleteCategories(id: number) {
-  await prisma.category.delete({ where: { id } });
+async function exclude(id: number) {
+  await prisma.category.delete({ where: { id } })
 }
 
-export {
-  deleteCategories, getAllCategories,
-  getCategoriesByFilterName, getCategoriesById, getCategoriesWithStock, insertCategories, updateCategories
-};
-
+export { exclude, getAll, getByFilterName, getById, insert, update }

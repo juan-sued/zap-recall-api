@@ -3,49 +3,39 @@ import { categoriesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category } from '@prisma/client'
 
-async function insertCategories(newCategories: Category) {
-  await categoriesRepository.insertCategories(newCategories)
+async function insert(newCategories: Category) {
+  await categoriesRepository.insert(newCategories)
 }
 
-async function getAllCategories(): Promise<Category[]> {
-  const categories = await categoriesRepository.getAllCategories()
+async function getAll(): Promise<Category[]> {
+  const categories = await categoriesRepository.getAll()
   if (!categories) throw errorFactory.notFound('categories')
 
   return categories
 }
 
-async function getCategoriesByName(name: string): Promise<Category[]> {
+async function getByName(name: string): Promise<Category[]> {
   const categories: Category[] =
-    await categoriesRepository.getCategoriesByFilterName(name)
+    await categoriesRepository.getByFilterName(name)
 
   if (!categories) throw errorFactory.notFound('categories')
 
   return categories
 }
 
-async function getCategoriesById(id: number): Promise<Category> {
-  const categories: Category = await categoriesRepository.getCategoriesById(id)
+async function getById(id: number): Promise<Category> {
+  const categories: Category = await categoriesRepository.getById(id)
   if (!categories) throw errorFactory.notFound('categories')
 
   return categories
 }
 
-async function updateCategories(
-  id: number,
-  updateCategoriesData: UpdateCategoriesData
-) {
-  await categoriesRepository.updateCategories(id, updateCategoriesData)
+async function update(id: number, updateCategoriesData: UpdateCategoriesData) {
+  await categoriesRepository.update(id, updateCategoriesData)
 }
 
-async function deleteCategories(id: number) {
-  await categoriesRepository.deleteCategories(id)
+async function exclude(id: number) {
+  await categoriesRepository.exclude(id)
 }
 
-export {
-  deleteCategories,
-  getAllCategories,
-  getCategoriesById,
-  getCategoriesByName,
-  insertCategories,
-  updateCategories
-}
+export { exclude, getAll, getById, getByName, insert, update }

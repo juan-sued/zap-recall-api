@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 
 import { NextFunction, Request, Response } from 'express'
 
-import { authInterfaces } from '@/interfaces'
+import { SignIn } from '@/entities'
 import { usersRepository } from '@/repositories'
 import { decodedToken } from '@/services/auth/jwtToken'
 import { errorFactory } from '@/utils/index'
@@ -52,11 +52,11 @@ const validateConflictByEmail = async (
   next: NextFunction
 ) => {
   const { email } = request.body
-
   const isRegisteredUser = await usersRepository.getByEmail(email)
 
   if (isRegisteredUser) throw errorFactory.conflict('User')
 
+  console.log('passou')
   response.locals.user = request.body
 
   next()
@@ -67,7 +67,9 @@ const validatePassword = async (
   response: Response,
   next: NextFunction
 ) => {
-  const userLogin: authInterfaces.ISign = request.body
+  const { id, name, email, password } = request.body
+
+  const userLogin: SignIn = new SignIn({ id, name, email, password })
 
   const { userInDB } = response.locals
 

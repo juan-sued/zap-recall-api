@@ -1,32 +1,32 @@
-import { usersInterface } from '@/interfaces'
+import { usersInterfaces } from '@/interfaces'
 import { UpdateUserData, UsersBasic } from '@/interfaces/users'
 import { usersRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
-async function getAllUsers(): Promise<usersInterface.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getAllUsers()
+async function getAllUsers(): Promise<usersInterfaces.ResponseAllUsers> {
+  const users: UsersBasic[] = await usersRepository.getAll()
 
   return {
     users
   }
 }
 
-async function getUserByName(
+async function getByName(
   name: string
-): Promise<usersInterface.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getUsersByFilterName(name)
+): Promise<usersInterfaces.ResponseAllUsers> {
+  const users: UsersBasic[] = await usersRepository.getByFilterName(name)
 
   return {
     users
   }
 }
 
-async function getUserById(
+async function getById(
   id: number
 ): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
-  const user: User = await usersRepository.getUserOrAdministratorById(id)
+  const user: User = await usersRepository.getById(id)
   return user
 }
 
@@ -36,18 +36,12 @@ async function updateUserService(id: number, updateUserData: UpdateUserData) {
     updateUserData.password = passwordCripted
   }
 
-  await usersRepository.updateUser(id, updateUserData)
+  await usersRepository.update(id, updateUserData)
 }
 
 async function deleteUserService(id: number) {
   if (!id) throw errorFactory.unprocessableEntity(['id inexistent'])
-  await usersRepository.deleteUser(id)
+  await usersRepository.exclude(id)
 }
 
-export {
-  deleteUserService,
-  getAllUsers,
-  getUserById,
-  getUserByName,
-  updateUserService
-}
+export { deleteUserService, getAllUsers, getById, getByName, updateUserService }
