@@ -11,8 +11,7 @@ async function signUp(request: Request, response: Response) {
 }
 
 async function signIn(request: Request, response: Response) {
-  const { id, name, email } = response.locals
-
+  const { id, name, email } = response.locals.userInDB
   const loginResponse: authInterfaces.ISignInResponse =
     await authService.signIn({ id, name, email })
   response.status(200).send(loginResponse)

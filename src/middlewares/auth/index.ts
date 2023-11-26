@@ -56,7 +56,6 @@ const validateConflictByEmail = async (
 
   if (isRegisteredUser) throw errorFactory.conflict('User')
 
-  console.log('passou')
   response.locals.user = request.body
 
   next()
@@ -78,8 +77,6 @@ const validatePassword = async (
   const isValidPassword = await bcrypt.compare(userLogin.password, dbPassword)
 
   if (!isValidPassword) throw errorFactory.forbidden()
-
-  response.locals.user = request.body
 
   next()
 }
