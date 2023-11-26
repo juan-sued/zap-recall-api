@@ -23,6 +23,8 @@ nginx.conf
 **/utils/index.ts
 **/entities/index.ts
 
+/tests/factories/index.ts
+
 
 
 

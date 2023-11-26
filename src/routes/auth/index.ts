@@ -17,6 +17,5 @@ authRouter
     '/sign-in',
     schemaMiddleware.validateSchema(authSchemas.signInSchema),
     authMiddleware.validateNotFoundByEmail,
-    authMiddleware.validatePassword,
     authController.signIn
   )

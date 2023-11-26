@@ -5,10 +5,6 @@ export class SignIn {
 
   // Getters
 
-  get id() {
-    return this.props.id
-  }
-
   get email() {
     return this.props.email
   }

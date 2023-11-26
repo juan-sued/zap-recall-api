@@ -2,11 +2,9 @@ import dotenv from 'dotenv'
 
 import { NextFunction, Request, Response } from 'express'
 
-import { SignIn } from '@/entities'
 import { usersRepository } from '@/repositories'
 import { decodedToken } from '@/services/auth/jwtToken'
 import { errorFactory } from '@/utils/index'
-import bcrypt from 'bcrypt'
 
 dotenv.config()
 
@@ -61,29 +59,4 @@ const validateConflictByEmail = async (
   next()
 }
 
-const validatePassword = async (
-  request: Request,
-  response: Response,
-  next: NextFunction
-) => {
-  const { id, name, email, password } = request.body
-
-  const userLogin: SignIn = new SignIn({ id, name, email, password })
-
-  const { userInDB } = response.locals
-
-  const dbPassword = userInDB.password ?? ''
-
-  const isValidPassword = await bcrypt.compare(userLogin.password, dbPassword)
-
-  if (!isValidPassword) throw errorFactory.forbidden()
-
-  next()
-}
-
-export {
-  validateConflictByEmail,
-  validateJwtToken,
-  validateNotFoundByEmail,
-  validatePassword
-}
+export { validateConflictByEmail, validateJwtToken, validateNotFoundByEmail }

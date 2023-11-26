@@ -1,4 +1,4 @@
-import { SignUp } from '@/entities'
+import { SignIn, SignUp } from '@/entities'
 import { authInterfaces } from '@/interfaces'
 import { authService } from '@/services'
 import { Request, Response } from 'express'
@@ -11,9 +11,11 @@ async function signUp(request: Request, response: Response) {
 }
 
 async function signIn(request: Request, response: Response) {
-  const { id, name, email } = response.locals.userInDB
+  const { email, password } = request.body
+  const user = new SignIn({ email, password })
+
   const loginResponse: authInterfaces.ISignInResponse =
-    await authService.signIn({ id, name, email })
+    await authService.signIn(user)
   response.status(200).send(loginResponse)
 }
 

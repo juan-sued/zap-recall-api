@@ -1,5 +1,6 @@
-import { SignUp } from '@/entities'
+import { SignIn, SignUp } from '@/entities'
 import { usersRepository } from '@/repositories'
+import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { createToken } from './jwtToken'
@@ -14,17 +15,21 @@ async function signUp({ email, name, password }: SignUp): Promise<User> {
   })
 }
 
-async function signIn({
-  id,
-  name,
-  email
-}: Pick<User, 'id' | 'name' | 'email'>) {
-  const token = createToken(id)
+async function signIn({ email, password }: SignIn) {
+  const userInDB = await usersRepository.getByEmail(email)
+
+  const dbPassword = userInDB.password ?? ''
+
+  const isValidPassword = await bcrypt.compare(password, dbPassword)
+
+  if (!isValidPassword) throw errorFactory.forbidden()
+
+  const token = createToken(userInDB.id)
 
   return {
     user: {
-      id,
-      name,
+      id: userInDB.id,
+      name: userInDB.name,
       email
     },
     token
