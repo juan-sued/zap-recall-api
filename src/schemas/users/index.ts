@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-const userUpdateSchema = Joi.object({
+const userUpdate = Joi.object({
   name: Joi.string().trim().min(1),
   email: Joi.string().email().trim().min(1),
   password: Joi.string().trim().min(1),
@@ -9,4 +9,4 @@ const userUpdateSchema = Joi.object({
   phone: Joi.string().trim().min(11)
 })
 
-export { userUpdateSchema }
+export { userUpdate }

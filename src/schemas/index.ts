@@ -1,4 +1,6 @@
-export * as authSchemas from './authSchemas'
-export * as categorySchemas from './categorySchemas'
-export * as userSchemas from './userSchemas'
+export * as authSchemas from './auth'
+export * as categoriesSchemas from './categories'
+export * as quizzesSchemas from './quizzes'
+export * as userSchemas from './users'
+
 

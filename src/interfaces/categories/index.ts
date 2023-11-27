@@ -1,9 +1,12 @@
 //= ================ update ====================
 
-interface UpdateCategoriesData {
+interface IUpdateCategoriesData {
   id?: number
-  name?: string
-  description?: string
+  title?: string
 }
 
-export { UpdateCategoriesData }
+interface INewCategory {
+  title: string
+}
+
+export { INewCategory, IUpdateCategoriesData }

@@ -1,8 +1,10 @@
 import { prisma } from '@/config'
 import { INewQuiz } from '@/interfaces/quizzes'
+import { quizzesRepository } from '@/repositories'
+import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
 
-async function insertQuiz(
+async function insert(
   { title, description, newCategory, categoryId, questions }: INewQuiz,
   userId: number
 ) {
@@ -25,6 +27,8 @@ async function insertQuiz(
     userId
   }
 
+  console.log(quiz)
+
   const quizCreated = await prisma.quiz.create({
     data: quiz
   })
@@ -44,4 +48,32 @@ async function insertQuiz(
   }
 }
 
-export { insertQuiz }
+async function getAll(): Promise<Quiz[]> {
+  const quizzes = await quizzesRepository.getAll()
+
+  if (!quizzes) throw errorFactory.notFound('quizzes')
+
+  return quizzes
+}
+
+async function getByTitle(title: string): Promise<Quiz[]> {
+  const quizzes: Quiz[] = await quizzesRepository.getByFilterTitle(title)
+
+  if (!quizzes) throw errorFactory.notFound('quizzes')
+
+  return quizzes
+}
+
+async function getById(id: number): Promise<Partial<Quiz>> {
+  const quiz = await quizzesRepository.getById(id)
+
+  if (!quiz) throw errorFactory.notFound('quiz')
+
+  return quiz
+}
+
+async function exclude(id: number) {
+  await quizzesRepository.exclude(id)
+}
+
+export { exclude, getAll, getById, getByTitle, insert }

@@ -1,4 +1,5 @@
-export * as usersRepository from './users/usersRepository';
+export * as usersRepository from './users';
 
-export * as categoriesRepository from './categories/categoriesRepository';
+export * as categoriesRepository from './categories';
+export * as quizzesRepository from './quizzes';
 

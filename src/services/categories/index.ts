@@ -1,9 +1,9 @@
-import { UpdateCategoriesData } from '@/interfaces/categories'
+import { INewCategory, IUpdateCategoriesData } from '@/interfaces/categories'
 import { categoriesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category } from '@prisma/client'
 
-async function insert(newCategories: Category) {
+async function insert(newCategories: INewCategory) {
   await categoriesRepository.insert(newCategories)
 }
 
@@ -14,9 +14,9 @@ async function getAll(): Promise<Category[]> {
   return categories
 }
 
-async function getByName(name: string): Promise<Category[]> {
+async function getByTitle(title: string): Promise<Category[]> {
   const categories: Category[] =
-    await categoriesRepository.getByFilterName(name)
+    await categoriesRepository.getByFilterTitle(title)
 
   if (!categories) throw errorFactory.notFound('categories')
 
@@ -30,7 +30,7 @@ async function getById(id: number): Promise<Category> {
   return categories
 }
 
-async function update(id: number, updateCategoriesData: UpdateCategoriesData) {
+async function update(id: number, updateCategoriesData: IUpdateCategoriesData) {
   await categoriesRepository.update(id, updateCategoriesData)
 }
 
@@ -38,4 +38,4 @@ async function exclude(id: number) {
   await categoriesRepository.exclude(id)
 }
 
-export { exclude, getAll, getById, getByName, insert, update }
+export { exclude, getAll, getById, getByTitle, insert, update }

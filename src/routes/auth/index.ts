@@ -9,13 +9,13 @@ export const authRouter = Router()
 authRouter
   .post(
     '/sign-up',
-    schemaMiddleware.validateSchema(authSchemas.signUpSchema),
+    schemaMiddleware.validateSchema(authSchemas.signUp),
     authMiddleware.validateConflictByEmail,
     authController.signUp
   )
   .post(
     '/sign-in',
-    schemaMiddleware.validateSchema(authSchemas.signInSchema),
+    schemaMiddleware.validateSchema(authSchemas.signIn),
     authMiddleware.validateNotFoundByEmail,
     authController.signIn
   )

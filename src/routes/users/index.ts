@@ -16,7 +16,7 @@ usersRouter
   .get('/:id', sharedMiddleware.validateIdParams, usersController.get)
   .patch(
     '/',
-    schemaMiddleware.validateSchema(userSchemas.userUpdateSchema),
+    schemaMiddleware.validateSchema(userSchemas.userUpdate),
     usersController.update
   )
   .delete('/', usersController.exclude)

@@ -33,9 +33,9 @@ model Quiz {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  categoryId  Int
-  userId      Int
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  Int      @db.Integer
+  userId      Int      @db.Integer
+  category    Category @relation(fields: [categoryId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
 
   quizzyQuestion QuizzyQuestion[]
@@ -49,7 +49,7 @@ model QuizzyQuestion {
   questionId Int @db.Integer
 
   quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id])
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("quiz_questions")
 }
