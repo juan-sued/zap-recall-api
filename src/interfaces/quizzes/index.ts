@@ -7,6 +7,7 @@ interface INewQuiz {
   description: string
   categoryId: number
   newCategory: string
+  difficulty: 'easy' | 'medium' | 'hard'
   questions: NewQuestion[]
 }
 

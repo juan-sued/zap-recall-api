@@ -5,7 +5,14 @@ import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
 
 async function insert(
-  { title, description, newCategory, categoryId, questions }: INewQuiz,
+  {
+    title,
+    description,
+    newCategory,
+    categoryId,
+    questions,
+    difficulty
+  }: INewQuiz,
   userId: number
 ) {
   if (newCategory) {
@@ -23,11 +30,12 @@ async function insert(
   const quiz: Omit<Quiz, 'id'> = {
     title,
     description,
+    difficulty,
+    attempts: 0,
+    percentEndings: 0,
     categoryId,
     userId
   }
-
-  console.log(quiz)
 
   const quizCreated = await prisma.quiz.create({
     data: quiz

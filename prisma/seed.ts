@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 async function main() {
 
-
+  cleanDB()
 
   let userDB = await prisma.user.findFirst()
 
@@ -62,6 +62,7 @@ async function main() {
       description: "Um quiz sobre deuterostomados",
       categoryId: 1,
       newCategory: "",
+      difficulty: 'medium',
       questions: [
         {
           question: "Por que as aves engolem pedras?",
@@ -81,7 +82,7 @@ async function main() {
         }
       ]
     };
-    let {title, description, categoryId, newCategory, questions} = quizMock;
+    let {title, description, categoryId, newCategory, questions, difficulty} = quizMock;
     
     if (newCategory) {
       const data = {
@@ -99,6 +100,9 @@ async function main() {
       title,
       description,
       categoryId,
+      difficulty,
+      attempts: 0,
+      percentEndings: 0,
       userId: userDB!.id
     }
   
@@ -125,6 +129,9 @@ async function main() {
 
 }
 
+
+
+
 main()
   .catch((e) => {
     console.error(e)
@@ -133,3 +140,17 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
+
+
+
+
+
+
+  async function cleanDB(){
+    await prisma.quizzyQuestion.deleteMany()
+    await prisma.question.deleteMany()
+    await prisma.quiz.deleteMany()
+    await prisma.category.deleteMany()
+    await prisma.user.deleteMany()
+    }
