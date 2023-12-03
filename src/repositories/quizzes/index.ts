@@ -4,7 +4,11 @@ import { Prisma, Quiz } from '@prisma/client'
 //= ================== GET =====================//
 
 function getAll(): Promise<Quiz[]> {
-  const params: Prisma.QuizFindManyArgs = {}
+  const params: Prisma.QuizFindManyArgs = {
+    include: {
+      category: true
+    }
+  }
 
   const quizzes = prisma.quiz.findMany(params)
 
