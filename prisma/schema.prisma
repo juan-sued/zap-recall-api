@@ -33,7 +33,7 @@ model Quiz {
   id             Int        @id @default(autoincrement())
   title          String
   description    String?
-  difficulty     Difficulty @default(easy)
+  difficulty     Difficulty @default(EASY)
   attempts       Int        @default(0)
   percentEndings Int        @default(0)
   categoryId     Int        @db.Integer
@@ -47,9 +47,9 @@ model Quiz {
 }
 
 enum Difficulty {
-  easy
-  medium
-  hard
+  EASY
+  MEDIUM
+  HARD
 }
 
 model QuizzyQuestion {

@@ -1,4 +1,4 @@
-import { Question, Quiz } from '@prisma/client'
+import { Difficulty, Question, Quiz } from '@prisma/client'
 
 type NewQuestion = Omit<Question, 'id'>
 
@@ -7,7 +7,7 @@ interface INewQuiz {
   description: string
   categoryId: number
   newCategory: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: Difficulty
   questions: NewQuestion[]
 }
 

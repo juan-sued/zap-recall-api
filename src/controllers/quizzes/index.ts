@@ -7,7 +7,8 @@ import { Request, Response } from 'express'
 async function insert(request: Request, response: Response) {
   const newQuiz: INewQuiz = request.body
   const userId = response.locals.idUser
-  await quizzesService.insert(newQuiz, userId)
+
+  await quizzesService.insert(newQuiz, 14)
 
   response.sendStatus(201)
 }

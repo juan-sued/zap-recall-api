@@ -4,8 +4,9 @@ import { Category } from '@prisma/client'
 import { Request, Response } from 'express'
 
 async function insert(request: Request, response: Response) {
-  const newCategories: INewCategory = request.body
-  await categoriesService.insert(newCategories)
+  const newCategory: INewCategory = request.body
+
+  await categoriesService.insert(newCategory)
 
   response.sendStatus(201)
 }

@@ -34,6 +34,16 @@ function getByFilterTitle(name: string): Promise<Category[]> {
   return prisma.category.findMany(params)
 }
 
+function getByTitle(title: string): Promise<Category> {
+  const params: Prisma.CategoryFindUniqueArgs = {
+    where: {
+      title
+    }
+  }
+
+  return prisma.category.findUnique(params)
+}
+
 //= ================ INSERT ===================//
 
 async function insert(newCategories: INewCategory) {
@@ -59,4 +69,12 @@ async function exclude(id: number) {
   await prisma.category.delete({ where: { id } })
 }
 
-export { exclude, getAll, getByFilterTitle, getById, insert, update }
+export {
+  exclude,
+  getAll,
+  getByFilterTitle,
+  getById,
+  getByTitle,
+  insert,
+  update
+}

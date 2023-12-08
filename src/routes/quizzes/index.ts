@@ -19,13 +19,14 @@ quizzesRouter
     quizzesMiddleware.validateNotFound,
     quizzesController.get
   )
-  .all('/*', authMiddleware.validateJwtToken)
   .post(
     '/',
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
+    quizzesMiddleware.validateConflict,
 
     quizzesController.insert
   )
+  .all('/*', authMiddleware.validateJwtToken)
   .patch(
     '/:id',
     sharedMiddleware.validateIdParams,

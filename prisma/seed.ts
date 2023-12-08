@@ -1,7 +1,7 @@
-import { Category, PrismaClient, Quiz, User } from '@prisma/client';
+import { Category, Difficulty, PrismaClient, Quiz, User } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { loadEnv } from '../src/config';
 import { quizzesInterfaces } from '../src/interfaces';
-
 
 
 const prisma = new PrismaClient()
@@ -9,60 +9,64 @@ const prisma = new PrismaClient()
 
 async function main() {
 
-  cleanDB()
+  await cleanDB()
+  loadEnv()
 
+  console.log(process.env.DATABASE_URL)
   let userDB = await prisma.user.findFirst()
 
-  if (!userDB){
-    async () => {
-      const mockUser: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'phone'>  = {
+  if (!userDB) {
+    try {
+      const mockUser: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'phone'> = {
         name: 'Juan Sued',
         email: 'juansued22@gmail.com',
         password: '112316',
-
-      }
-
-      const passwordEncripted = await bcrypt.hash(mockUser.password, 10)
+      };
+  
+      const passwordEncripted = await bcrypt.hash(mockUser.password, 10);
+  
       userDB = await prisma.user.create({
         data: { ...mockUser, password: passwordEncripted },
-      })
-
+      });
+  
+    } catch (error) {
+      console.log('erro aqui', error);
     }
-    console.log( 'criado usuário: ', userDB )
-
   }
+  
+  console.log('usuário:', userDB);
 
   let categoryDB = await prisma.category.findFirst()
 
-  if (!categoryDB){
-    async () => {
+  if (!categoryDB) {
+    try {
       const mockCategory: Omit<Category, 'id'> = {
-        title: 'Biologia'
-      }
+        title: 'Biologia',
+      };
+
       categoryDB = await prisma.category.create({
         data: mockCategory,
-      })
+      });
 
+    } catch (error) {
+      console.log('erro aqui', error);
     }
-    console.log( 'criada categoria: ', categoryDB )
-
   }
+
+  console.log('categoria:', categoryDB);
 
 
 
   let quizDB = await prisma.quiz.findFirst()
 
 
-
-
-
   if(!quizDB){
     const quizMock: quizzesInterfaces.INewQuiz = {
       title: "Deuterostomados",
       description: "Um quiz sobre deuterostomados",
-      categoryId: 1,
+      categoryId: categoryDB!.id,
       newCategory: "",
-      difficulty: 'medium',
+      difficulty: Difficulty.EASY,
       questions: [
         {
           question: "Por que as aves engolem pedras?",
@@ -82,7 +86,7 @@ async function main() {
         }
       ]
     };
-    let {title, description, categoryId, newCategory, questions, difficulty} = quizMock;
+    let { title, description, categoryId, newCategory, questions, difficulty } = quizMock;
     
     if (newCategory) {
       const data = {
@@ -105,6 +109,8 @@ async function main() {
       percentEndings: 0,
       userId: userDB!.id
     }
+    console.log('user aqui', quiz.userId)
+
   
     const quizCreated = await prisma.quiz.create({
       data: quiz

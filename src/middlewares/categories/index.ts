@@ -10,13 +10,11 @@ const validateConflict = async (
   const { title } = request.body
   if (!title) throw errorFactory.unprocessableEntity(['Title inexistent'])
 
-  const isRegisteredCategories =
-    await categoriesRepository.getByFilterTitle(title)
+  const isRegisteredCategory = await categoriesRepository.getByTitle(title)
 
-  if (isRegisteredCategories.length > 0)
-    throw errorFactory.conflict('Categories')
+  if (isRegisteredCategory) throw errorFactory.conflict('Categories')
 
-  response.locals.product = isRegisteredCategories
+  response.locals.category = isRegisteredCategory
 
   next()
 }
