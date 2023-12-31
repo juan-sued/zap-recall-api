@@ -5,8 +5,8 @@ import {
   schemaMiddleware,
   sharedMiddleware
 } from '@/middlewares'
+import { categoriesSchemas } from '@/schemas'
 
-import { categorySchema, categoryUpdateSchema } from '@/schemas/categorySchemas'
 import { Router } from 'express'
 
 const categoriesRouter = Router()
@@ -22,7 +22,7 @@ categoriesRouter
   )
   .post(
     '/',
-    schemaMiddleware.validateSchema(categorySchema),
+    schemaMiddleware.validateSchema(categoriesSchemas.category),
     categoriesMiddleware.validateConflict,
     categoriesController.insert
   )
@@ -30,7 +30,7 @@ categoriesRouter
     '/:id',
     sharedMiddleware.validateIdParams,
     categoriesMiddleware.validateNotFound,
-    schemaMiddleware.validateSchema(categoryUpdateSchema),
+    schemaMiddleware.validateSchema(categoriesSchemas.categoryUpdate),
     categoriesController.update
   )
   .delete(

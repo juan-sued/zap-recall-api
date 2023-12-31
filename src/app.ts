@@ -5,6 +5,7 @@ import 'reflect-metadata'
 import { connectDb, disconnectDB, loadEnv } from './config'
 import { errorHandlerMiddleware } from './errors'
 import { authRouter, categoriesRouter, usersRouter } from './routes'
+import { quizzesRouter } from './routes/quizzes'
 
 loadEnv()
 
@@ -16,6 +17,7 @@ app
   .use('/auth', authRouter)
   .use('/users', usersRouter)
   .use('/categories', categoriesRouter)
+  .use('/quizzes', quizzesRouter)
   .get('/health', (_req, res) => res.send('OK!'))
 
   .use(errorHandlerMiddleware)

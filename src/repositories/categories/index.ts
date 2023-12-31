@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { UpdateCategoriesData } from '@/interfaces/categories'
+import { INewCategory, IUpdateCategoriesData } from '@/interfaces/categories'
 import { Category, Prisma } from '@prisma/client'
 
 //= ================== GET =====================//
@@ -19,7 +19,7 @@ async function getById(id: number): Promise<Category> {
   return category
 }
 
-function getByFilterName(name: string): Promise<Category[]> {
+function getByFilterTitle(name: string): Promise<Category[]> {
   const params: Prisma.CategoryFindManyArgs = {
     where: {
       title: {
@@ -34,9 +34,19 @@ function getByFilterName(name: string): Promise<Category[]> {
   return prisma.category.findMany(params)
 }
 
+function getByTitle(title: string): Promise<Category> {
+  const params: Prisma.CategoryFindUniqueArgs = {
+    where: {
+      title
+    }
+  }
+
+  return prisma.category.findUnique(params)
+}
+
 //= ================ INSERT ===================//
 
-async function insert(newCategories: Category) {
+async function insert(newCategories: INewCategory) {
   await prisma.category.create({
     data: newCategories
   })
@@ -44,7 +54,7 @@ async function insert(newCategories: Category) {
 
 //= ================ UPDATE ===================//
 
-async function update(id: number, updateCategoriesData: UpdateCategoriesData) {
+async function update(id: number, updateCategoriesData: IUpdateCategoriesData) {
   const params: Prisma.CategoryUpdateArgs = {
     where: { id },
     data: updateCategoriesData
@@ -59,4 +69,12 @@ async function exclude(id: number) {
   await prisma.category.delete({ where: { id } })
 }
 
-export { exclude, getAll, getByFilterName, getById, insert, update }
+export {
+  exclude,
+  getAll,
+  getByFilterTitle,
+  getById,
+  getByTitle,
+  insert,
+  update
+}
