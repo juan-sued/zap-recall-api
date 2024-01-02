@@ -11,17 +11,17 @@ async function insert(
     newCategory,
     categoryId,
     questions,
-    difficulty
+    difficulty,
   }: INewQuiz,
-  userId: number
+  userId: number,
 ) {
   if (newCategory) {
     const data = {
-      title: newCategory
+      title: newCategory,
     }
 
     const category: Category = await prisma.category.create({
-      data
+      data,
     })
 
     categoryId = category.id
@@ -34,24 +34,24 @@ async function insert(
     attempts: 0,
     percentEndings: 0,
     categoryId,
-    userId
+    userId,
   }
 
   const quizCreated = await prisma.quiz.create({
-    data: quiz
+    data: quiz,
   })
 
   // cria um question e um identificador na tabela meio
   for (const question of questions) {
     const questionCreated = await prisma.question.create({
-      data: question
+      data: question,
     })
 
     await prisma.quizzyQuestion.create({
       data: {
         quizId: quizCreated.id,
-        questionId: questionCreated.id
-      }
+        questionId: questionCreated.id,
+      },
     })
   }
 }

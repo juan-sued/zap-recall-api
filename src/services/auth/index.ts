@@ -11,7 +11,7 @@ async function signUp({ email, name, password }: SignUp): Promise<User> {
   return await usersRepository.insert({
     email,
     name,
-    password
+    password,
   })
 }
 
@@ -30,9 +30,9 @@ async function signIn({ email, password }: SignIn) {
     user: {
       id: userInDB.id,
       name: userInDB.name,
-      email
+      email,
     },
-    token
+    token,
   }
 }
 

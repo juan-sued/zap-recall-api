@@ -12,8 +12,8 @@ function getAll(): Promise<Category[]> {
 async function getById(id: number): Promise<Category> {
   const category = await prisma.category.findUnique({
     where: {
-      id
-    }
+      id,
+    },
   })
 
   return category
@@ -24,11 +24,11 @@ function getByFilterTitle(name: string): Promise<Category[]> {
     where: {
       title: {
         startsWith: `${name}`,
-        mode: 'insensitive'
-      }
+        mode: 'insensitive',
+      },
     },
     skip: 0,
-    take: undefined
+    take: undefined,
   }
 
   return prisma.category.findMany(params)
@@ -37,8 +37,8 @@ function getByFilterTitle(name: string): Promise<Category[]> {
 function getByTitle(title: string): Promise<Category> {
   const params: Prisma.CategoryFindUniqueArgs = {
     where: {
-      title
-    }
+      title,
+    },
   }
 
   return prisma.category.findUnique(params)
@@ -48,7 +48,7 @@ function getByTitle(title: string): Promise<Category> {
 
 async function insert(newCategories: INewCategory) {
   await prisma.category.create({
-    data: newCategories
+    data: newCategories,
   })
 }
 
@@ -57,7 +57,7 @@ async function insert(newCategories: INewCategory) {
 async function update(id: number, updateCategoriesData: IUpdateCategoriesData) {
   const params: Prisma.CategoryUpdateArgs = {
     where: { id },
-    data: updateCategoriesData
+    data: updateCategoriesData,
   }
 
   await prisma.category.update(params)
@@ -76,5 +76,5 @@ export {
   getById,
   getByTitle,
   insert,
-  update
+  update,
 }

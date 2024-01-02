@@ -10,7 +10,7 @@ import { quizzesRouter } from './routes/quizzes'
 loadEnv()
 
 const app = express()
-
+console.log(process.env.NODE_ENV)
 app
   .use(cors())
   .use(json())

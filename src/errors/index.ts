@@ -4,7 +4,7 @@ function errorHandlerMiddleware(
   error: ErrorEvent,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   switch (error.type) {
     case 'error_unprocessable_entity':

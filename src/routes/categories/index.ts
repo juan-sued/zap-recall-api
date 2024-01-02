@@ -3,7 +3,7 @@ import {
   authMiddleware,
   categoriesMiddleware,
   schemaMiddleware,
-  sharedMiddleware
+  sharedMiddleware,
 } from '@/middlewares'
 import { categoriesSchemas } from '@/schemas'
 
@@ -18,26 +18,26 @@ categoriesRouter
     '/:id',
     sharedMiddleware.validateIdParams,
     categoriesMiddleware.validateNotFound,
-    categoriesController.get
+    categoriesController.get,
   )
   .post(
     '/',
     schemaMiddleware.validateSchema(categoriesSchemas.category),
     categoriesMiddleware.validateConflict,
-    categoriesController.insert
+    categoriesController.insert,
   )
   .patch(
     '/:id',
     sharedMiddleware.validateIdParams,
     categoriesMiddleware.validateNotFound,
     schemaMiddleware.validateSchema(categoriesSchemas.categoryUpdate),
-    categoriesController.update
+    categoriesController.update,
   )
   .delete(
     '/:id',
     sharedMiddleware.validateIdParams,
     categoriesMiddleware.validateNotFound,
-    categoriesController.exclude
+    categoriesController.exclude,
   )
 
 export { categoriesRouter }
