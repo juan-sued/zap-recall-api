@@ -3,7 +3,7 @@ import {
   authMiddleware,
   quizzesMiddleware,
   schemaMiddleware,
-  sharedMiddleware
+  sharedMiddleware,
 } from '@/middlewares'
 import { quizzesSchemas } from '@/schemas'
 
@@ -17,27 +17,26 @@ quizzesRouter
     '/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    quizzesController.get
+    quizzesController.get,
   )
+  .all('/*', authMiddleware.validateJwtToken)
   .post(
     '/',
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
     quizzesMiddleware.validateConflict,
-
-    quizzesController.insert
+    quizzesController.insert,
   )
-  .all('/*', authMiddleware.validateJwtToken)
   .patch(
     '/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    schemaMiddleware.validateSchema(quizzesSchemas.quiz)
+    schemaMiddleware.validateSchema(quizzesSchemas.quiz),
   )
   .delete(
     '/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    quizzesController.exclude
+    quizzesController.exclude,
   )
 
 export { quizzesRouter }

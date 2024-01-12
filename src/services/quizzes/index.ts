@@ -37,6 +37,7 @@ async function insert(
     userId,
   }
 
+  console.log(quiz)
   const quizCreated = await prisma.quiz.create({
     data: quiz,
   })

@@ -8,10 +8,21 @@ interface ISignUpRequest extends Pick<User, 'name' | 'email' | 'password'> {
 
 interface ISignInResponse {
   user: {
-    id: number
     name: string
+    email: string
+    createdAt: Date
   }
   token: string
 }
 
-export { ISignInRequest, ISignInResponse, ISignUpRequest }
+interface IRecoverUserInformation {
+  name: string
+  email: string
+  createdAt: Date
+}
+export {
+  ISignInRequest,
+  ISignInResponse,
+  ISignUpRequest,
+  IRecoverUserInformation,
+}

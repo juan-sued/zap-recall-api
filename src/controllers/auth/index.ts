@@ -18,5 +18,11 @@ async function signIn(request: Request, response: Response) {
     await authService.signIn(user)
   response.status(200).send(loginResponse)
 }
+async function recoverUserInformation(request: Request, response: Response) {
+  const { idUser } = response.locals
+  const recoverResponse: authInterfaces.IRecoverUserInformation =
+    await authService.recoverUserInformation(idUser)
+  response.status(200).send(recoverResponse)
+}
 
-export { signIn, signUp }
+export { signIn, signUp, recoverUserInformation }

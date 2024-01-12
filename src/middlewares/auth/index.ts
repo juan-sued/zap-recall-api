@@ -11,7 +11,7 @@ dotenv.config()
 async function validateJwtToken(
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   const authHeader = request.header('Authorization')
   if (!authHeader) throw errorFactory.unauthorized('authHeader')
@@ -32,7 +32,7 @@ async function validateJwtToken(
 const validateNotFoundByEmail = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { email } = request.body
 
@@ -47,7 +47,7 @@ const validateNotFoundByEmail = async (
 const validateConflictByEmail = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { email } = request.body
   const isRegisteredUser = await usersRepository.getByEmail(email)

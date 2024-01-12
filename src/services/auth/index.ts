@@ -28,12 +28,22 @@ async function signIn({ email, password }: SignIn) {
 
   return {
     user: {
-      id: userInDB.id,
       name: userInDB.name,
+      createdAt: userInDB.createdAt,
       email,
     },
     token,
   }
 }
 
-export { signIn, signUp }
+async function recoverUserInformation(id: number) {
+  const userInDB = await usersRepository.getById(id)
+
+  return {
+    name: userInDB.name,
+    email: userInDB.email,
+    createdAt: userInDB.createdAt,
+  }
+}
+
+export { signIn, signUp, recoverUserInformation }

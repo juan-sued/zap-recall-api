@@ -1,19 +1,19 @@
-import { categoriesRepository } from '@/repositories'
+import { quizzesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { NextFunction, Request, Response } from 'express'
 
 const validateNotFound = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { idParams } = response.locals
 
-  const isRegisteredCategories = await categoriesRepository.getById(idParams)
+  const isRegisteredQuiz = await quizzesRepository.getById(idParams)
 
-  if (!isRegisteredCategories) throw errorFactory.notFound('Category')
+  if (!isRegisteredQuiz) throw errorFactory.notFound('Quiz')
 
-  response.locals.category = isRegisteredCategories
+  response.locals.category = isRegisteredQuiz
 
   next()
 }
@@ -21,21 +21,15 @@ const validateNotFound = async (
 const validateConflict = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  const { newCategory, categoryId } = request.body
+  const newQuiz = request.body
 
-  if (!newCategory && !categoryId)
-    throw errorFactory.unprocessableEntity([
-      'newCategory or categoryId inexistent'
-    ])
+  if (!newQuiz) throw errorFactory.unprocessableEntity(['Quiz inexistent'])
 
-  if (!categoryId && newCategory) {
-    const isRegisteredCategory =
-      await categoriesRepository.getByTitle(newCategory)
+  // const isRegisteredQuiz = await quizzesRepository.getById(newQuiz.id)
 
-    if (isRegisteredCategory) throw errorFactory.conflict('Category')
-  }
+  // if (isRegisteredQuiz) throw errorFactory.conflict('Quiz')
 
   next()
 }

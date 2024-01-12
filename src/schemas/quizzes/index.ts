@@ -10,9 +10,9 @@ const quiz = Joi.object({
     .min(1)
     .items({
       question: Joi.string().trim().min(1).required(),
-      response: Joi.string().trim().min(1).required()
+      response: Joi.string().trim().min(1).required(),
     })
-    .required()
+    .required(),
 })
 
 export { quiz }

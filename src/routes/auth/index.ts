@@ -11,11 +11,13 @@ authRouter
     '/sign-up',
     schemaMiddleware.validateSchema(authSchemas.signUp),
     authMiddleware.validateConflictByEmail,
-    authController.signUp
+    authController.signUp,
   )
   .post(
     '/sign-in',
     schemaMiddleware.validateSchema(authSchemas.signIn),
     authMiddleware.validateNotFoundByEmail,
-    authController.signIn
+    authController.signIn,
   )
+  .all('/*', authMiddleware.validateJwtToken)
+  .get('/recover-user-information', authController.recoverUserInformation)

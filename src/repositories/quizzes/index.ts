@@ -6,8 +6,8 @@ import { Prisma, Quiz } from '@prisma/client'
 function getAll(): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
     include: {
-      category: true
-    }
+      category: true,
+    },
   }
 
   const quizzes = prisma.quiz.findMany(params)
@@ -18,7 +18,7 @@ function getAll(): Promise<Quiz[]> {
 async function getById(id: number): Promise<Partial<Quiz>> {
   const quiz = await prisma.quiz.findUnique({
     where: {
-      id
+      id,
     },
 
     select: {
@@ -31,15 +31,15 @@ async function getById(id: number): Promise<Partial<Quiz>> {
           id: true,
           name: true,
           email: true,
-          createdAt: true
-        }
+          createdAt: true,
+        },
       },
       quizzyQuestion: {
         select: {
-          question: true
-        }
-      }
-    }
+          question: true,
+        },
+      },
+    },
   })
 
   return quiz
@@ -50,11 +50,11 @@ function getByFilterTitle(name: string): Promise<Quiz[]> {
     where: {
       title: {
         startsWith: `${name}`,
-        mode: 'insensitive'
-      }
+        mode: 'insensitive',
+      },
     },
     skip: 0,
-    take: undefined
+    take: undefined,
   }
 
   return prisma.quiz.findMany(params)
@@ -64,7 +64,7 @@ function getByFilterTitle(name: string): Promise<Quiz[]> {
 
 async function insert(data: Omit<Quiz, 'id'>) {
   await prisma.quiz.create({
-    data
+    data,
   })
 }
 
