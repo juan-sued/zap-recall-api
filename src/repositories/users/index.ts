@@ -10,8 +10,8 @@ async function getAll(): Promise<UsersBasic[]> {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      name: true
-    }
+      name: true,
+    },
   })
 
   return users
@@ -20,8 +20,8 @@ async function getAll(): Promise<UsersBasic[]> {
 function getByEmail(email: string) {
   const params: Prisma.UserFindUniqueArgs = {
     where: {
-      email
-    }
+      email,
+    },
   }
 
   return prisma.user.findUnique(params)
@@ -30,9 +30,9 @@ function getByEmail(email: string) {
 async function getById(id: number): Promise<User> {
   const user = await prisma.user.findUnique({
     where: {
-      id
+      id,
     },
-    include: {}
+    include: {},
   })
 
   delete user.password
@@ -44,11 +44,11 @@ function getByFilterName(name: string): Promise<UsersBasic[]> {
     where: {
       name: {
         startsWith: `${name}`,
-        mode: 'insensitive'
-      }
+        mode: 'insensitive',
+      },
     },
     skip: 0,
-    take: undefined
+    take: undefined,
   }
 
   return prisma.user.findMany(params)
@@ -65,7 +65,7 @@ async function insert(newUser: authInterfaces.ISignUpRequest) {
 async function update(id: number, updateUserData: UpdateUserData) {
   const resultUsers = await prisma.user.update({
     where: { id },
-    data: updateUserData
+    data: updateUserData,
   })
 
   if (!resultUsers) throw errorFactory.notFound('User')

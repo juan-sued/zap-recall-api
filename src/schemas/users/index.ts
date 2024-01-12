@@ -6,7 +6,7 @@ const userUpdate = Joi.object({
   password: Joi.string().trim().min(1),
   typeOfUserId: Joi.number().min(0),
   cpf: Joi.string().trim().min(11),
-  phone: Joi.string().trim().min(11)
+  phone: Joi.string().trim().min(11),
 })
 
 export { userUpdate }

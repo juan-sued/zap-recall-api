@@ -30,7 +30,7 @@ async function update(req: Request, res: Response) {
   const { title } = req.body
 
   const updatedCategories = await categoriesService.update(idParams, {
-    title
+    title,
   })
 
   return res.status(200).send(updatedCategories)
