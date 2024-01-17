@@ -12,7 +12,6 @@ async function main() {
   await cleanDB()
   loadEnv()
 
-  console.log(process.env.DATABASE_URL)
   let userDB = await prisma.user.findFirst()
 
   if (!userDB) {
@@ -34,7 +33,6 @@ async function main() {
     }
   }
   
-  console.log('usuário:', userDB);
 
   let categoryDB = await prisma.category.findFirst()
 
@@ -53,7 +51,6 @@ async function main() {
     }
   }
 
-  console.log('categoria:', categoryDB);
 
 
 
@@ -88,28 +85,17 @@ async function main() {
     };
     let { title, description, categoryId, newCategory, questions, difficulty } = quizMock;
     
-    if (newCategory) {
-      const data = {
-        title: newCategory
-      }
-  
-      const category: Category = await prisma.category.create({
-        data
-      })
-  
-      categoryId = category.id
-    }
+   
   
     const quiz: Omit<Quiz, 'id'> = {
       title,
       description,
-      categoryId,
+      categoryId: categoryDB!.id,
       difficulty,
       attempts: 0,
       percentEndings: 0,
       userId: userDB!.id
     }
-    console.log('user aqui', quiz.userId)
 
   
     const quizCreated = await prisma.quiz.create({
@@ -119,13 +105,10 @@ async function main() {
     // cria um question e um identificador na tabela meio
     for (const question of questions) {
       const questionCreated = await prisma.question.create({
-        data: question
-      })
-  
-      await prisma.quizzyQuestion.create({
         data: {
           quizId: quizCreated.id,
-          questionId: questionCreated.id
+          question:question.question,
+          response: question.response,
         }
       })
     }
@@ -154,7 +137,6 @@ main()
 
 
   async function cleanDB(){
-    await prisma.quizzyQuestion.deleteMany()
     await prisma.question.deleteMany()
     await prisma.quiz.deleteMany()
     await prisma.category.deleteMany()
