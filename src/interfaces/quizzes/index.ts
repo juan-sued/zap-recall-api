@@ -15,4 +15,14 @@ interface IQuiz extends Quiz {
   questions: Question[]
 }
 
-export { INewQuiz, IQuiz, NewQuestion }
+interface IAnswer {
+  questionId: number
+  answer: string
+}
+
+interface IObjRegisterAnswer {
+  quizId: number
+  answers: IAnswer[]
+}
+
+export { INewQuiz, IQuiz, NewQuestion, IAnswer, IObjRegisterAnswer }

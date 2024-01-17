@@ -8,12 +8,15 @@ const validateNotFound = async (
   next: NextFunction,
 ) => {
   const { idParams } = response.locals
+  const { quizId } = request.body
 
-  const isRegisteredQuiz = await quizzesRepository.getById(idParams)
+  const id = idParams ?? quizId
+
+  const isRegisteredQuiz = await quizzesRepository.getById(id)
 
   if (!isRegisteredQuiz) throw errorFactory.notFound('Quiz')
 
-  response.locals.category = isRegisteredQuiz
+  response.locals.quiz = isRegisteredQuiz
 
   next()
 }

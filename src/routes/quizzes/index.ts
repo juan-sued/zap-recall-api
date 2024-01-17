@@ -12,19 +12,25 @@ import { Router } from 'express'
 const quizzesRouter = Router()
 
 quizzesRouter
-  .get('/', quizzesController.get)
+  .get('/', quizzesController.quiz.get)
   .get(
     '/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    quizzesController.get,
+    quizzesController.quiz.get,
+  )
+  .post(
+    '/answers',
+    schemaMiddleware.validateSchema(quizzesSchemas.objRegisterAnswer),
+    quizzesMiddleware.validateNotFound,
+    quizzesController.answer.insertAnswer,
   )
   .all('/*', authMiddleware.validateJwtToken)
   .post(
     '/',
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
     quizzesMiddleware.validateConflict,
-    quizzesController.insert,
+    quizzesController.quiz.insert,
   )
   .patch(
     '/:id',
@@ -36,7 +42,7 @@ quizzesRouter
     '/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    quizzesController.exclude,
+    quizzesController.quiz.exclude,
   )
 
 export { quizzesRouter }

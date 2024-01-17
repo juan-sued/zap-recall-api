@@ -1,5 +1,6 @@
 import { prisma } from '@/config'
-import { INewQuiz } from '@/interfaces/quizzes'
+import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
+import { authMiddleware } from '@/middlewares'
 import { quizzesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
@@ -85,4 +86,30 @@ async function exclude(id: number) {
   await quizzesRepository.exclude(id)
 }
 
-export { exclude, getAll, getById, getByTitle, insert }
+// answer
+
+interface IRegisterAnswerService {
+  quizId: number | null
+  userId: number | null
+  answers: IAnswer[]
+}
+
+async function insertAnswer({
+  quizId,
+  userId,
+  answers,
+}: IRegisterAnswerService) {
+  console.log(quizId, userId, answers)
+}
+
+const answer = { insertAnswer }
+
+const quiz = {
+  exclude,
+  getAll,
+  getById,
+  getByTitle,
+  insert,
+}
+
+export { quiz, answer }
