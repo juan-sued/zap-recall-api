@@ -1,6 +1,5 @@
 import { prisma } from '@/config'
 import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
-import { authMiddleware } from '@/middlewares'
 import { quizzesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
@@ -38,22 +37,19 @@ async function insert(
     userId,
   }
 
-  console.log(quiz)
   const quizCreated = await prisma.quiz.create({
     data: quiz,
   })
 
-  // cria um question e um identificador na tabela meio
   for (const question of questions) {
-    const questionCreated = await prisma.question.create({
-      data: question,
-    })
+    const newQuestion = {
+      quizId: quizCreated.id,
+      question: question.question,
+      response: question.response,
+    }
 
-    await prisma.quizzyQuestion.create({
-      data: {
-        quizId: quizCreated.id,
-        questionId: questionCreated.id,
-      },
+    await prisma.question.create({
+      data: newQuestion,
     })
   }
 }

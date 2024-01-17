@@ -1,6 +1,6 @@
 import { Difficulty, Question, Quiz } from '@prisma/client'
 
-type NewQuestion = Omit<Question, 'id'>
+type NewQuestion = Omit<Question, 'id' | 'quizId'>
 
 interface INewQuiz {
   title: string

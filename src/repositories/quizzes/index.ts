@@ -37,9 +37,11 @@ async function getById(id: number): Promise<Partial<Quiz>> {
           createdAt: true,
         },
       },
-      quizzyQuestion: {
+      questions: {
         select: {
+          id: true,
           question: true,
+          response: true,
         },
       },
     },

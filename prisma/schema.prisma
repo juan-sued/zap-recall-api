@@ -40,8 +40,7 @@ model Quiz {
   userId         Int        @db.Integer
   category       Category   @relation(fields: [categoryId], references: [id])
   user           User       @relation(fields: [userId], references: [id])
-
-  quizzyQuestion QuizzyQuestion[]
+  questions      Question[]
 
   @@map("quizzies")
 }
@@ -52,22 +51,12 @@ enum Difficulty {
   HARD
 }
 
-model QuizzyQuestion {
-  id         Int @id @default(autoincrement())
-  quizId     Int @db.Integer
-  questionId Int @db.Integer
-
-  quiz     Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@map("quiz_questions")
-}
-
 model Question {
-  id              Int              @id @default(autoincrement())
-  question        String
-  response        String
-  quizzyQuestions QuizzyQuestion[] @relation
+  id       Int    @id @default(autoincrement())
+  quizId   Int
+  question String
+  response String
+  quiz     Quiz   @relation(fields: [quizId], references: [id])
 
   @@map("questions")
 }
