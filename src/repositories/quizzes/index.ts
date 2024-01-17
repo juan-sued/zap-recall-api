@@ -26,6 +26,9 @@ async function getById(id: number): Promise<Partial<Quiz>> {
       title: true,
       description: true,
       category: true,
+      attempts: true,
+      difficulty: true,
+      percentEndings: true,
       user: {
         select: {
           id: true,
