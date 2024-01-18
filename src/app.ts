@@ -4,8 +4,13 @@ import 'express-async-errors'
 import 'reflect-metadata'
 import { connectDb, disconnectDB, loadEnv } from './config'
 import { errorHandlerMiddleware } from './errors'
-import { authRouter, categoriesRouter, usersRouter } from './routes'
-import { quizzesRouter } from './routes/quizzes'
+import {
+  authRouter,
+  categoriesRouter,
+  historicRouter,
+  usersRouter,
+  quizzesRouter,
+} from './routes'
 
 loadEnv()
 
@@ -18,8 +23,8 @@ app
   .use('/users', usersRouter)
   .use('/categories', categoriesRouter)
   .use('/quizzes', quizzesRouter)
+  .use('/historic', historicRouter)
   .get('/health', (_req, res) => res.send('OK!'))
-
   .use(errorHandlerMiddleware)
 
 export function init(): Promise<Express> {

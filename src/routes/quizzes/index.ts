@@ -20,12 +20,14 @@ quizzesRouter
     quizzesController.quiz.get,
   )
   .post(
-    '/answers',
-    schemaMiddleware.validateSchema(quizzesSchemas.objRegisterAnswer),
+    '/attempts/:id',
+    sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
-    quizzesController.answer.insertAnswer,
+    quizzesController.quiz.incrementAttempt,
   )
+
   .all('/*', authMiddleware.validateJwtToken)
+
   .post(
     '/',
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
@@ -43,6 +45,12 @@ quizzesRouter
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.exclude,
+  )
+  .post(
+    '/answers',
+    schemaMiddleware.validateSchema(quizzesSchemas.objRegisterAnswer),
+    quizzesMiddleware.validateNotFound,
+    quizzesController.answer.insertAnswer,
   )
 
 export { quizzesRouter }

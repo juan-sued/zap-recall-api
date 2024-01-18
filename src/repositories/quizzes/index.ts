@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { Prisma, Quiz } from '@prisma/client'
+import { Answer, Prisma, Quiz } from '@prisma/client'
 
 //= ================== GET =====================//
 
@@ -15,7 +15,15 @@ function getAll(): Promise<Quiz[]> {
   return quizzes
 }
 
-async function getById(id: number): Promise<Partial<Quiz>> {
+type QuizWithQuestions = Partial<Quiz> & {
+  questions: Array<{
+    id: number
+    question: string
+    response: string
+  }>
+}
+
+async function getById(id: number): Promise<QuizWithQuestions> {
   const quiz = await prisma.quiz.findUnique({
     where: {
       id,
@@ -47,7 +55,7 @@ async function getById(id: number): Promise<Partial<Quiz>> {
     },
   })
 
-  return quiz
+  return quiz as QuizWithQuestions
 }
 
 function getByFilterTitle(name: string): Promise<Quiz[]> {
@@ -81,4 +89,38 @@ async function exclude(id: number) {
   await prisma.quiz.delete({ where: { id } })
 }
 
-export { exclude, getAll, getByFilterTitle, getById, insert }
+//= ================== ANSWERS ========================//
+
+async function insertAnswer(data: Omit<Answer, 'id' | 'createdAt'>) {
+  await prisma.answer.create({
+    data,
+  })
+}
+
+async function incrementAttempt(quizId: number) {
+  await prisma.quiz.update({
+    where: {
+      id: quizId,
+    },
+    data: {
+      attempts: {
+        increment: 1,
+      },
+    },
+  })
+}
+
+const quiz = {
+  exclude,
+  getAll,
+  getByFilterTitle,
+  getById,
+  insert,
+  incrementAttempt,
+}
+
+const answer = {
+  insertAnswer,
+}
+
+export { quiz, answer }

@@ -1,13 +1,12 @@
 import { INewQuiz, IObjRegisterAnswer } from '@/interfaces/quizzes'
-import { authMiddleware } from '@/middlewares'
 import { quizzesService } from '@/services'
 import { errorFactory } from '@/utils'
-import { Quiz } from '@prisma/client'
-import { NextFunction, Request, Response } from 'express'
+import { Historic, Quiz } from '@prisma/client'
+import { Request, Response } from 'express'
 
 async function insert(request: Request, response: Response) {
   const newQuiz: INewQuiz = request.body
-  const userId = response.locals.idUser
+  const { userId } = response.locals
   await quizzesService.quiz.insert(newQuiz, userId)
 
   response.sendStatus(201)
@@ -36,27 +35,40 @@ async function exclude(request: Request, response: Response) {
   response.sendStatus(200)
 }
 
-async function insertAnswer(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) {
-  const authHeader = request.header('Authorization')
-  let userId = null
-  if (authHeader) {
-    await authMiddleware.validateJwtToken(request, response, next)
-    userId = response.locals.idUser
-  }
+async function insertAnswer(request: Request, response: Response) {
+  const { userId } = response.locals
 
   const { quizId, answers }: IObjRegisterAnswer = request.body
 
   await quizzesService.answer.insertAnswer({
     quizId,
     answers,
-    userId,
+    playerId: userId,
   })
 
   response.sendStatus(201)
+}
+
+async function incrementAttempt(request: Request, response: Response) {
+  const { quiz } = response.locals
+
+  await quizzesService.quiz.incrementAttempt(quiz.id)
+
+  response.sendStatus(200)
+}
+
+async function getHistoric(request: Request, response: Response) {
+  const { id } = request.params
+  const { userId } = response.locals
+  let result: any = null
+
+  if (id) {
+    result = await quizzesService.quiz.getHistoricById(id)
+  } else {
+    result = await quizzesService.quiz.getAllHistoricByUser(userId)
+  }
+
+  response.send(result).status(200)
 }
 const answer = {
   insertAnswer,
@@ -65,6 +77,8 @@ const quiz = {
   exclude,
   get,
   insert,
+  incrementAttempt,
+  getHistoric,
 }
 
 export { quiz, answer }
