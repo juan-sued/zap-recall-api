@@ -45,6 +45,7 @@ async function insertAnswer(request: Request, response: Response) {
     answers,
     playerId: userId,
   })
+  await quizzesService.quiz.incrementAttempt(quizId)
 
   response.sendStatus(201)
 }
