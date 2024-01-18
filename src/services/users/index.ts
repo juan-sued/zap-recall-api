@@ -9,22 +9,22 @@ async function getAllUsers(): Promise<usersInterfaces.ResponseAllUsers> {
   const users: UsersBasic[] = await usersRepository.getAll()
 
   return {
-    users
+    users,
   }
 }
 
 async function getByName(
-  name: string
+  name: string,
 ): Promise<usersInterfaces.ResponseAllUsers> {
   const users: UsersBasic[] = await usersRepository.getByFilterName(name)
 
   return {
-    users
+    users,
   }
 }
 
 async function getById(
-  id: number
+  id: number,
 ): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
   const user: User = await usersRepository.getById(id)
   return user

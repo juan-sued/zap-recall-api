@@ -1,8 +1,8 @@
 import { prisma } from '@/config'
 import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
-import { quizzesRepository } from '@/repositories'
+import { historicRepository, quizzesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
-import { Category, Quiz } from '@prisma/client'
+import { Category, Historic, Quiz } from '@prisma/client'
 
 async function insert(
   {
@@ -55,7 +55,7 @@ async function insert(
 }
 
 async function getAll(): Promise<Quiz[]> {
-  const quizzes = await quizzesRepository.getAll()
+  const quizzes = await quizzesRepository.quiz.getAll()
 
   if (!quizzes) throw errorFactory.notFound('quizzes')
 
@@ -63,7 +63,7 @@ async function getAll(): Promise<Quiz[]> {
 }
 
 async function getByTitle(title: string): Promise<Quiz[]> {
-  const quizzes: Quiz[] = await quizzesRepository.getByFilterTitle(title)
+  const quizzes: Quiz[] = await quizzesRepository.quiz.getByFilterTitle(title)
 
   if (!quizzes) throw errorFactory.notFound('quizzes')
 
@@ -71,7 +71,7 @@ async function getByTitle(title: string): Promise<Quiz[]> {
 }
 
 async function getById(id: number): Promise<Partial<Quiz>> {
-  const quiz = await quizzesRepository.getById(id)
+  const quiz = await quizzesRepository.quiz.getById(id)
 
   if (!quiz) throw errorFactory.notFound('quiz')
 
@@ -79,23 +79,58 @@ async function getById(id: number): Promise<Partial<Quiz>> {
 }
 
 async function exclude(id: number) {
-  await quizzesRepository.exclude(id)
+  await quizzesRepository.quiz.exclude(id)
 }
 
 // answer
 
 interface IRegisterAnswerService {
   quizId: number | null
-  userId: number | null
+  playerId: number | null
   answers: IAnswer[]
 }
 
 async function insertAnswer({
   quizId,
-  userId,
+  playerId,
   answers,
 }: IRegisterAnswerService) {
-  console.log(quizId, userId, answers)
+  const historic = await historicRepository.insert({
+    playerId,
+    quizId,
+  })
+
+  for (const answerUnit of answers) {
+    const { questionId, answer } = answerUnit
+    await quizzesRepository.answer.insertAnswer({
+      questionId,
+      response: answer,
+      historicId: historic.id,
+    })
+  }
+
+  // criar um answer para cada resposta
+  console.log(quizId, playerId, answers)
+}
+async function incrementAttempt(quizId: number) {
+  await quizzesRepository.quiz.incrementAttempt(quizId)
+}
+
+async function getHistoricById(id: string) {
+  if (!id) throw errorFactory.unprocessableEntity(['id inexistent'])
+  const historic = await historicRepository.getById(Number(id))
+
+  if (!historic) throw errorFactory.notFound('Historic')
+
+  return historic
+}
+
+async function getAllHistoricByUser(playerId: number) {
+  const historic = await historicRepository.getAllByUser(playerId)
+
+  if (!historic) throw errorFactory.notFound('Historic')
+
+  return historic
 }
 
 const answer = { insertAnswer }
@@ -106,6 +141,9 @@ const quiz = {
   getById,
   getByTitle,
   insert,
+  incrementAttempt,
+  getHistoricById,
+  getAllHistoricByUser,
 }
 
 export { quiz, answer }

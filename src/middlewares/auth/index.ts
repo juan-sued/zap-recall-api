@@ -19,12 +19,11 @@ async function validateJwtToken(
   const token = authHeader.split(' ')[1]
   if (!token) throw errorFactory.unauthorized('token')
   const payload = await decodedToken(token)
-
+  if (!payload.id) throw errorFactory.notFound('id user')
   const user = await usersRepository.getById(payload.id)
-
   if (!user) throw errorFactory.notFound('usuário inexistente')
 
-  response.locals.idUser = payload.id
+  response.locals.userId = payload.id
 
   next()
 }
