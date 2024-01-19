@@ -1,8 +1,6 @@
 import { prisma } from '@/config'
 import { Answer, Prisma, Quiz } from '@prisma/client'
 
-//= ================== GET =====================//
-
 function getAll(): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
     include: {
@@ -73,29 +71,17 @@ function getByFilterTitle(name: string): Promise<Quiz[]> {
   return prisma.quiz.findMany(params)
 }
 
-//= ================ INSERT ===================//
-
 async function insert(data: Omit<Quiz, 'id'>) {
   await prisma.quiz.create({
     data,
   })
 }
 
-//= ================ UPDATE ===================//
-
-//= ================ exclude ===================//
-
 async function exclude(id: number) {
   await prisma.quiz.delete({ where: { id } })
 }
 
 //= ================== ANSWERS ========================//
-
-async function insertAnswer(data: Omit<Answer, 'id' | 'createdAt'>) {
-  await prisma.answer.create({
-    data,
-  })
-}
 
 async function incrementAttempt(quizId: number) {
   await prisma.quiz.update({
@@ -110,17 +96,4 @@ async function incrementAttempt(quizId: number) {
   })
 }
 
-const quiz = {
-  exclude,
-  getAll,
-  getByFilterTitle,
-  getById,
-  insert,
-  incrementAttempt,
-}
-
-const answer = {
-  insertAnswer,
-}
-
-export { quiz, answer }
+export { exclude, getAll, getByFilterTitle, getById, insert, incrementAttempt }

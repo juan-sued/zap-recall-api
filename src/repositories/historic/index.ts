@@ -41,7 +41,7 @@ async function getAllByUser(playerId: number) {
     },
     select: {
       id: true,
-      quizId: true,
+      quiz: true,
       createdAt: true,
     },
   })

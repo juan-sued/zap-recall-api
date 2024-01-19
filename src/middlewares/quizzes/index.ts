@@ -13,7 +13,7 @@ const validateNotFound = async (
 
   const id = idParams ?? quizId
 
-  const isRegisteredQuiz = await quizzesRepository.quiz.getById(id)
+  const isRegisteredQuiz = await quizzesRepository.getById(id)
 
   if (!isRegisteredQuiz) throw errorFactory.notFound('Quiz')
 
@@ -36,7 +36,7 @@ const validateConflict = async (
 
   if (!newQuiz) throw errorFactory.unprocessableEntity(['Quiz inexistent'])
 
-  // const isRegisteredQuiz = await quizzesRepository.quiz.getById(newQuiz.id)
+  // const isRegisteredQuiz = await quizzesRepository.getById(newQuiz.id)
 
   // if (isRegisteredQuiz) throw errorFactory.conflict('Quiz')
 

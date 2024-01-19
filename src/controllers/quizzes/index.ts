@@ -1,7 +1,7 @@
 import { INewQuiz, IObjRegisterAnswer } from '@/interfaces/quizzes'
 import { quizzesService } from '@/services'
 import { errorFactory } from '@/utils'
-import { Historic, Quiz } from '@prisma/client'
+import { Quiz } from '@prisma/client'
 import { Request, Response } from 'express'
 
 async function insert(request: Request, response: Response) {
@@ -35,12 +35,12 @@ async function exclude(request: Request, response: Response) {
   response.sendStatus(200)
 }
 
-async function insertAnswer(request: Request, response: Response) {
+async function insertHistoric(request: Request, response: Response) {
   const { userId } = response.locals
 
   const { quizId, answers }: IObjRegisterAnswer = request.body
 
-  await quizzesService.answer.insertAnswer({
+  await quizzesService.historic.insertHistoric({
     quizId,
     answers,
     playerId: userId,
@@ -61,6 +61,7 @@ async function incrementAttempt(request: Request, response: Response) {
 async function getHistoric(request: Request, response: Response) {
   const { id } = request.params
   const { userId } = response.locals
+
   let result: any = null
 
   if (id) {
@@ -71,15 +72,15 @@ async function getHistoric(request: Request, response: Response) {
 
   response.send(result).status(200)
 }
-const answer = {
-  insertAnswer,
+const historic = {
+  insertHistoric,
+  getHistoric,
 }
 const quiz = {
   exclude,
   get,
   insert,
   incrementAttempt,
-  getHistoric,
 }
 
-export { quiz, answer }
+export { quiz, historic }

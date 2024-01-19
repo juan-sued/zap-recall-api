@@ -29,7 +29,7 @@ async function main() {
       });
   
     } catch (error) {
-      console.log('erro aqui', error);
+      console.log(error);
     }
   }
   
@@ -47,7 +47,7 @@ async function main() {
       });
 
     } catch (error) {
-      console.log('erro aqui', error);
+      console.log(error);
     }
   }
 

@@ -18,9 +18,9 @@ const answer = Joi.object({
   answer: Joi.string().required(),
 })
 
-const objRegisterAnswer = Joi.object({
+const historic = Joi.object({
   quizId: Joi.number().required(),
   answers: Joi.array().items(answer).min(1).required(),
 })
 
-export { quiz, objRegisterAnswer }
+export { quiz, historic }
