@@ -10,7 +10,11 @@ const validateIdParams = async (
 
   if (!id) throw errorFactory.unprocessableEntity(['id inexistent'])
 
-  response.locals.idParams = Number(id)
+  const idNumber = Number(id)
+  if (isNaN(idNumber))
+    throw errorFactory.unprocessableEntity(['id must be a number'])
+
+  response.locals.idParams = idNumber
   next()
 }
 

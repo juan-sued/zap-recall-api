@@ -14,7 +14,7 @@ const quizzesRouter = Router()
 quizzesRouter
   .get('/', quizzesController.quiz.get)
   .get(
-    '/:id',
+    '/quiz/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.get,
@@ -25,9 +25,7 @@ quizzesRouter
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.incrementAttempt,
   )
-
   .all('/*', authMiddleware.validateJwtToken)
-
   .post(
     '/',
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
@@ -35,22 +33,28 @@ quizzesRouter
     quizzesController.quiz.insert,
   )
   .patch(
-    '/:id',
+    '/quiz/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
     schemaMiddleware.validateSchema(quizzesSchemas.quiz),
   )
   .delete(
-    '/:id',
+    '/quiz/:id',
     sharedMiddleware.validateIdParams,
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.exclude,
   )
   .post(
-    '/answers',
-    schemaMiddleware.validateSchema(quizzesSchemas.objRegisterAnswer),
+    '/historic',
+    schemaMiddleware.validateSchema(quizzesSchemas.historic),
     quizzesMiddleware.validateNotFound,
-    quizzesController.answer.insertAnswer,
+    quizzesController.historic.insertHistoric,
+  )
+  .get('/historic', quizzesController.historic.getHistoric)
+  .get(
+    '/historic/:id',
+    sharedMiddleware.validateIdParams,
+    quizzesController.historic.getHistoric,
   )
 
 export { quizzesRouter }

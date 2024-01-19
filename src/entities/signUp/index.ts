@@ -24,7 +24,6 @@ export class SignUp {
     const { password, confirmPassword } = props
 
     if (password !== confirmPassword) {
-      console.log('senhas diferentes')
       throw new Error('Password and confirmPassword must match')
     }
 

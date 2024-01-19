@@ -21,18 +21,17 @@ async function get(request: Request, response: Response) {
 }
 
 async function update(request: Request, response: Response) {
-  const { idUser } = response.locals
+  const { userId } = response.locals
   const updateUserData = request.body
-  console.log(idUser, updateUserData)
-  await usersService.updateUserService(idUser, updateUserData)
+  await usersService.updateUserService(userId, updateUserData)
 
   response.sendStatus(200)
 }
 
 async function exclude(request: Request, response: Response) {
-  const { idUser } = response.locals
+  const { userId } = response.locals
 
-  await usersService.deleteUserService(idUser)
+  await usersService.deleteUserService(userId)
 
   response.sendStatus(200)
 }

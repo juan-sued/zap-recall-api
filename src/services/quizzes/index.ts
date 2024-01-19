@@ -1,8 +1,12 @@
 import { prisma } from '@/config'
 import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
-import { historicRepository, quizzesRepository } from '@/repositories'
+import {
+  answersRepository,
+  historicRepository,
+  quizzesRepository,
+} from '@/repositories'
 import { errorFactory } from '@/utils'
-import { Category, Historic, Quiz } from '@prisma/client'
+import { Category, Quiz } from '@prisma/client'
 
 async function insert(
   {
@@ -55,7 +59,7 @@ async function insert(
 }
 
 async function getAll(): Promise<Quiz[]> {
-  const quizzes = await quizzesRepository.quiz.getAll()
+  const quizzes = await quizzesRepository.getAll()
 
   if (!quizzes) throw errorFactory.notFound('quizzes')
 
@@ -63,7 +67,7 @@ async function getAll(): Promise<Quiz[]> {
 }
 
 async function getByTitle(title: string): Promise<Quiz[]> {
-  const quizzes: Quiz[] = await quizzesRepository.quiz.getByFilterTitle(title)
+  const quizzes: Quiz[] = await quizzesRepository.getByFilterTitle(title)
 
   if (!quizzes) throw errorFactory.notFound('quizzes')
 
@@ -71,7 +75,7 @@ async function getByTitle(title: string): Promise<Quiz[]> {
 }
 
 async function getById(id: number): Promise<Partial<Quiz>> {
-  const quiz = await quizzesRepository.quiz.getById(id)
+  const quiz = await quizzesRepository.getById(id)
 
   if (!quiz) throw errorFactory.notFound('quiz')
 
@@ -79,22 +83,22 @@ async function getById(id: number): Promise<Partial<Quiz>> {
 }
 
 async function exclude(id: number) {
-  await quizzesRepository.quiz.exclude(id)
+  await quizzesRepository.exclude(id)
 }
 
 // answer
 
-interface IRegisterAnswerService {
+interface IRegisterHistoricService {
   quizId: number | null
   playerId: number | null
   answers: IAnswer[]
 }
 
-async function insertAnswer({
+async function insertHistoric({
   quizId,
   playerId,
   answers,
-}: IRegisterAnswerService) {
+}: IRegisterHistoricService) {
   const historic = await historicRepository.insert({
     playerId,
     quizId,
@@ -102,7 +106,7 @@ async function insertAnswer({
 
   for (const answerUnit of answers) {
     const { questionId, answer } = answerUnit
-    await quizzesRepository.answer.insertAnswer({
+    await answersRepository.insert({
       questionId,
       response: answer,
       historicId: historic.id,
@@ -110,10 +114,9 @@ async function insertAnswer({
   }
 
   // criar um answer para cada resposta
-  console.log(quizId, playerId, answers)
 }
 async function incrementAttempt(quizId: number) {
-  await quizzesRepository.quiz.incrementAttempt(quizId)
+  await quizzesRepository.incrementAttempt(quizId)
 }
 
 async function getHistoricById(id: string) {
@@ -133,7 +136,7 @@ async function getAllHistoricByUser(playerId: number) {
   return historic
 }
 
-const answer = { insertAnswer }
+const historic = { insertHistoric }
 
 const quiz = {
   exclude,
@@ -146,4 +149,4 @@ const quiz = {
   getAllHistoricByUser,
 }
 
-export { quiz, answer }
+export { quiz, historic }

@@ -7,7 +7,6 @@ import { errorHandlerMiddleware } from './errors'
 import {
   authRouter,
   categoriesRouter,
-  historicRouter,
   usersRouter,
   quizzesRouter,
 } from './routes'
@@ -15,7 +14,6 @@ import {
 loadEnv()
 
 const app = express()
-console.log(process.env.NODE_ENV)
 app
   .use(cors())
   .use(json())
@@ -23,7 +21,6 @@ app
   .use('/users', usersRouter)
   .use('/categories', categoriesRouter)
   .use('/quizzes', quizzesRouter)
-  .use('/historic', historicRouter)
   .get('/health', (_req, res) => res.send('OK!'))
   .use(errorHandlerMiddleware)
 

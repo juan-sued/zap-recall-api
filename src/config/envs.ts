@@ -9,7 +9,6 @@ export function loadEnv() {
         ? '.env.development'
         : '.env'
 
-  console.log(process.env.NODE_ENV)
   const currentEnvs = dotenv.config({ path })
   dotenvExpand.expand(currentEnvs)
 }
