@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { Answer, Prisma, Quiz } from '@prisma/client'
+import { Prisma, Quiz } from '@prisma/client'
 
 function getAll(): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
@@ -34,7 +34,7 @@ async function getById(id: number): Promise<QuizWithQuestions> {
       category: true,
       attempts: true,
       difficulty: true,
-      percentEndings: true,
+      endings: true,
       user: {
         select: {
           id: true,

@@ -36,7 +36,7 @@ async function insert(
     description,
     difficulty,
     attempts: 0,
-    percentEndings: 0,
+    endings: 0,
     categoryId,
     userId,
   }

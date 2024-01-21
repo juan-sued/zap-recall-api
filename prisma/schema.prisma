@@ -17,6 +17,7 @@ model User {
   updatedAt DateTime @updatedAt()
 
   quiz Quiz[]
+  Like Like[]
 
   @@map("users")
 }
@@ -30,18 +31,19 @@ model Category {
 }
 
 model Quiz {
-  id             Int        @id @default(autoincrement())
-  title          String
-  description    String?
-  difficulty     Difficulty @default(EASY)
-  attempts       Int        @default(0)
-  percentEndings Int        @default(0)
-  categoryId     Int        @db.Integer
-  userId         Int        @db.Integer
-  category       Category   @relation(fields: [categoryId], references: [id])
-  user           User       @relation(fields: [userId], references: [id])
-  questions      Question[]
-  Historic       Historic[]
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  difficulty  Difficulty @default(EASY)
+  attempts    Int        @default(0)
+  endings     Int        @default(0)
+  categoryId  Int        @db.Integer
+  userId      Int        @db.Integer
+  category    Category   @relation(fields: [categoryId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
+  questions   Question[]
+  Historic    Historic[]
+  Like        Like[]
 
   @@map("quizzies")
 }
@@ -84,4 +86,16 @@ model Answer {
   historic   Historic @relation(fields: [historicId], references: [id])
 
   @@map("answers")
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  quizId     Int
+  likeStatus Boolean
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  quiz       Quiz     @relation(fields: [quizId], references: [id])
+
+  @@map("likes")
 }

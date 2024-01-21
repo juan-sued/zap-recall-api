@@ -93,7 +93,7 @@ async function main() {
       categoryId: categoryDB!.id,
       difficulty,
       attempts: 0,
-      percentEndings: 0,
+      endings: 0,
       userId: userDB!.id
     }
 
