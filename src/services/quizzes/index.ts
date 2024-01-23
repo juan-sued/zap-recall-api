@@ -1,12 +1,15 @@
 import { prisma } from '@/config'
-import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
+import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import {
   answersRepository,
   historicRepository,
+  likesRepository,
   quizzesRepository,
 } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
+import { Request, Response } from 'express'
+import { decodedToken } from '../auth/jwtToken'
 
 async function insert(
   {
@@ -74,12 +77,38 @@ async function getByTitle(title: string): Promise<Quiz[]> {
   return quizzes
 }
 
-async function getById(id: number): Promise<Partial<Quiz>> {
-  const quiz = await quizzesRepository.getById(id)
+interface IGetById {
+  request: Request
+  idParams: number
+}
 
+async function getById({
+  request,
+  idParams,
+}: IGetById): Promise<Partial<Quiz>> {
+  const authHeader = request.header('Authorization')
+
+  const quiz = await quizzesRepository.getById(idParams)
   if (!quiz) throw errorFactory.notFound('quiz')
 
-  return quiz
+  let quizWithLike: any = { ...quiz, isLiked: null }
+  if (authHeader) {
+    const token = authHeader.split(' ')[1]
+    if (!token) throw errorFactory.unauthorized('token')
+
+    const payload = await decodedToken(token)
+
+    const userId = payload.id
+
+    const liked = await likesRepository.verifyIfLikeByQuizIdAndPlayerId({
+      playerId: userId,
+      quizId: quiz.id,
+    })
+
+    if (liked) quizWithLike = { ...quiz, isLiked: liked.like.likeStatus }
+  }
+
+  return quizWithLike
 }
 
 async function exclude(id: number) {
@@ -88,20 +117,31 @@ async function exclude(id: number) {
 
 // answer
 
-interface IRegisterHistoricService {
-  quizId: number | null
-  playerId: number | null
-  answers: IAnswer[]
+interface IInsertHistoricService extends IHistoricBody {
+  playerId: number
 }
 
 async function insertHistoric({
   quizId,
   playerId,
   answers,
-}: IRegisterHistoricService) {
+  isLiked,
+}: IInsertHistoricService) {
+  const isQuizLiked = await likesRepository.verifyIfLikeByQuizIdAndPlayerId({
+    playerId,
+    quizId,
+  })
+
+  if (isQuizLiked && isLiked === null) throw errorFactory.conflict('Like')
+
+  const like = await likesRepository.insert({
+    likeStatus: isLiked,
+  })
+
   const historic = await historicRepository.insert({
     playerId,
     quizId,
+    likeId: like.id,
   })
 
   for (const answerUnit of answers) {

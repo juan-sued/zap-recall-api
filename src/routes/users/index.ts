@@ -2,7 +2,7 @@ import { usersController } from '@/controllers'
 import {
   authMiddleware,
   schemaMiddleware,
-  sharedMiddleware
+  sharedMiddleware,
 } from '@/middlewares'
 
 import { userSchemas } from '@/schemas'
@@ -17,7 +17,7 @@ usersRouter
   .patch(
     '/',
     schemaMiddleware.validateSchema(userSchemas.userUpdate),
-    usersController.update
+    usersController.update,
   )
   .delete('/', usersController.exclude)
 

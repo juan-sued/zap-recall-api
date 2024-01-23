@@ -56,5 +56,6 @@ quizzesRouter
     sharedMiddleware.validateIdParams,
     quizzesController.historic.getHistoric,
   )
+  .get('/historic/likes', quizzesController.quiz.get)
 
 export { quizzesRouter }

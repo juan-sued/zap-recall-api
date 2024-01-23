@@ -21,6 +21,7 @@ const answer = Joi.object({
 const historic = Joi.object({
   quizId: Joi.number().required(),
   answers: Joi.array().items(answer).min(1).required(),
+  isLiked: Joi.boolean().allow(null).required(),
 })
 
 export { quiz, historic }
