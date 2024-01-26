@@ -86,12 +86,13 @@ async function getById({
   request,
   idParams,
 }: IGetById): Promise<Partial<Quiz>> {
-  const authHeader = request.header('Authorization')
-
   const quiz = await quizzesRepository.getById(idParams)
   if (!quiz) throw errorFactory.notFound('quiz')
 
   let quizWithLike: any = { ...quiz, isLiked: null }
+
+  const authHeader = request.header('Authorization')
+
   if (authHeader) {
     const token = authHeader.split(' ')[1]
     if (!token) throw errorFactory.unauthorized('token')
@@ -132,7 +133,7 @@ async function insertHistoric({
     quizId,
   })
 
-  if (isQuizLiked && isLiked === null) throw errorFactory.conflict('Like')
+  if (isQuizLiked && isLiked === null) isLiked = isQuizLiked.like.likeStatus
 
   const like = await likesRepository.insert({
     likeStatus: isLiked,
