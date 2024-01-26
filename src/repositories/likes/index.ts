@@ -22,11 +22,11 @@ interface IGetLikedQuizByQuizId {
   quizId: number
   playerId: number
 }
-async function verifyIfLikeByQuizIdAndPlayerId({
+async function getLikeByQuizIdAndPlayerId({
   quizId,
   playerId,
 }: IGetLikedQuizByQuizId) {
-  const isLiked = await prisma.historic.findFirst({
+  const like = await prisma.historic.findFirst({
     where: {
       quizId,
       playerId,
@@ -37,13 +37,25 @@ async function verifyIfLikeByQuizIdAndPlayerId({
       },
     },
     select: {
-      like: {
-        select: {
-          likeStatus: true,
-        },
-      },
+      like: true,
     },
   })
-  return isLiked
+  return like
 }
-export { insert, verifyIfLikeByQuizIdAndPlayerId, getById }
+
+async function getLikesByAuthorId(userId: number) {
+  const likes = await prisma.historic.findMany({
+    where: {
+      quiz: {
+        userId,
+      },
+    },
+    select: {
+      like: true,
+      quiz: true,
+    },
+  })
+  return likes
+}
+
+export { insert, getLikeByQuizIdAndPlayerId, getById, getLikesByAuthorId }

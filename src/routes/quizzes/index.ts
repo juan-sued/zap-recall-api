@@ -44,6 +44,7 @@ quizzesRouter
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.exclude,
   )
+
   .post(
     '/historic',
     schemaMiddleware.validateSchema(quizzesSchemas.historic),
@@ -52,10 +53,10 @@ quizzesRouter
   )
   .get('/historic', quizzesController.historic.getHistoric)
   .get(
-    '/historic/:id',
+    '/historic/id/:id',
     sharedMiddleware.validateIdParams,
     quizzesController.historic.getHistoric,
   )
-  .get('/historic/likes', quizzesController.quiz.get)
+  .get('/historic/likes', quizzesController.historic.getHistoricLikes)
 
 export { quizzesRouter }

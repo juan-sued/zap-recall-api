@@ -85,7 +85,7 @@ model Answer {
   response   String
   createdAt  DateTime @default(now())
   question   Question @relation(fields: [questionId], references: [id])
-  historic   Historic @relation(fields: [historicId], references: [id])
+  historic   Historic @relation(fields: [historicId], references: [id], onDelete: Cascade)
 
   @@map("answers")
 }

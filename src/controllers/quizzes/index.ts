@@ -2,7 +2,7 @@ import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import { quizzesService } from '@/services'
 import { errorFactory } from '@/utils'
 import { Quiz } from '@prisma/client'
-import { Request, Response } from 'express'
+import { Request, Response, response } from 'express'
 
 async function insert(request: Request, response: Response) {
   const newQuiz: INewQuiz = request.body
@@ -67,10 +67,17 @@ async function getHistoric(request: Request, response: Response) {
   let result: any = null
 
   if (id) {
-    result = await quizzesService.quiz.getHistoricById(id)
+    result = await quizzesService.historic.getHistoricById(id)
   } else {
-    result = await quizzesService.quiz.getAllHistoricByUser(userId)
+    result = await quizzesService.historic.getAllHistoricByUser(userId)
   }
+
+  response.send(result).status(200)
+}
+async function getHistoricLikes(request: Request, response: Response) {
+  const { userId } = response.locals
+
+  const result = await quizzesService.historic.getLikesByAuthor(userId)
 
   response.send(result).status(200)
 }
@@ -85,6 +92,7 @@ const quiz = {
 const historic = {
   insertHistoric,
   getHistoric,
+  getHistoricLikes,
 }
 
 export { quiz, historic }

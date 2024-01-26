@@ -89,7 +89,7 @@ async function getById({
   const quiz = await quizzesRepository.getById(idParams)
   if (!quiz) throw errorFactory.notFound('quiz')
 
-  let quizWithLike: any = { ...quiz, isLiked: null }
+  const quizWithLike: any = { ...quiz, isLiked: null }
 
   const authHeader = request.header('Authorization')
 
@@ -101,14 +101,13 @@ async function getById({
 
     const userId = payload.id
 
-    const liked = await likesRepository.verifyIfLikeByQuizIdAndPlayerId({
+    const liked = await likesRepository.getLikeByQuizIdAndPlayerId({
       playerId: userId,
       quizId: quiz.id,
     })
 
-    if (liked) quizWithLike = { ...quiz, isLiked: liked.like.likeStatus }
+    if (liked) quizWithLike.isLiked = liked.like.likeStatus
   }
-
   return quizWithLike
 }
 
@@ -128,21 +127,25 @@ async function insertHistoric({
   answers,
   isLiked,
 }: IInsertHistoricService) {
-  const isQuizLiked = await likesRepository.verifyIfLikeByQuizIdAndPlayerId({
+  // valida se existe histico onde o likeStatus !== null  -> ja deu like nesse quiz
+  const isQuizLiked = await likesRepository.getLikeByQuizIdAndPlayerId({
     playerId,
     quizId,
   })
+  let likeId: number | null = null
 
-  if (isQuizLiked && isLiked === null) isLiked = isQuizLiked.like.likeStatus
-
-  const like = await likesRepository.insert({
-    likeStatus: isLiked,
-  })
-
+  if (isQuizLiked) {
+    likeId = isQuizLiked.like.id
+  } else {
+    const like = await likesRepository.insert({
+      likeStatus: isLiked,
+    })
+    likeId = like.id
+  }
   const historic = await historicRepository.insert({
     playerId,
     quizId,
-    likeId: like.id,
+    likeId,
   })
 
   for (const answerUnit of answers) {
@@ -176,8 +179,19 @@ async function getAllHistoricByUser(playerId: number) {
 
   return historic
 }
+async function getLikesByAuthor(userId: number) {
+  const likes = await likesRepository.getLikesByAuthorId(userId)
 
-const historic = { insertHistoric }
+  if (!likes) throw errorFactory.notFound('Like')
+
+  return likes
+}
+const historic = {
+  insertHistoric,
+  getHistoricById,
+  getAllHistoricByUser,
+  getLikesByAuthor,
+}
 
 const quiz = {
   exclude,
@@ -186,8 +200,6 @@ const quiz = {
   getByTitle,
   insert,
   incrementAttempt,
-  getHistoricById,
-  getAllHistoricByUser,
 }
 
 export { quiz, historic }
