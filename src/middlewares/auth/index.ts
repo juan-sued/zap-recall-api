@@ -40,7 +40,7 @@ const validateNotFoundByEmail = async (
 
   const isRegisteredUser = await usersRepository.getByEmail(email)
 
-  if (!isRegisteredUser) throw errorFactory.forbidden()
+  if (!isRegisteredUser) throw errorFactory.notFound('User')
 
   response.locals.userInDB = isRegisteredUser
   next()

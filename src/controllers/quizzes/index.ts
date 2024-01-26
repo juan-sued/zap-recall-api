@@ -1,8 +1,8 @@
-import { INewQuiz, IObjRegisterAnswer } from '@/interfaces/quizzes'
+import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import { quizzesService } from '@/services'
 import { errorFactory } from '@/utils'
 import { Quiz } from '@prisma/client'
-import { Request, Response } from 'express'
+import { Request, Response, response } from 'express'
 
 async function insert(request: Request, response: Response) {
   const newQuiz: INewQuiz = request.body
@@ -19,7 +19,8 @@ async function get(request: Request, response: Response) {
 
   if (title) result = await quizzesService.quiz.getByTitle(title)
 
-  if (idParams) result = await quizzesService.quiz.getById(idParams)
+  if (idParams)
+    result = await quizzesService.quiz.getById({ request, idParams })
 
   if (!title && !idParams) result = await quizzesService.quiz.getAll()
 
@@ -38,12 +39,13 @@ async function exclude(request: Request, response: Response) {
 async function insertHistoric(request: Request, response: Response) {
   const { userId } = response.locals
 
-  const { quizId, answers }: IObjRegisterAnswer = request.body
+  const { quizId, answers, isLiked }: IHistoricBody = request.body
 
   await quizzesService.historic.insertHistoric({
     quizId,
     answers,
     playerId: userId,
+    isLiked,
   })
   await quizzesService.quiz.incrementAttempt(quizId)
 
@@ -65,22 +67,32 @@ async function getHistoric(request: Request, response: Response) {
   let result: any = null
 
   if (id) {
-    result = await quizzesService.quiz.getHistoricById(id)
+    result = await quizzesService.historic.getHistoricById(id)
   } else {
-    result = await quizzesService.quiz.getAllHistoricByUser(userId)
+    result = await quizzesService.historic.getAllHistoricByUser(userId)
   }
 
   response.send(result).status(200)
 }
-const historic = {
-  insertHistoric,
-  getHistoric,
+async function getHistoricLikes(request: Request, response: Response) {
+  const { userId } = response.locals
+
+  const result = await quizzesService.historic.getLikesByAuthor(userId)
+
+  response.send(result).status(200)
 }
+
 const quiz = {
   exclude,
   get,
   insert,
   incrementAttempt,
+}
+
+const historic = {
+  insertHistoric,
+  getHistoric,
+  getHistoricLikes,
 }
 
 export { quiz, historic }

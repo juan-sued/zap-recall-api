@@ -16,8 +16,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  quiz Quiz[]
-  Like Like[]
+  quiz     Quiz[]
+  Historic Historic[]
 
   @@map("users")
 }
@@ -43,7 +43,6 @@ model Quiz {
   user        User       @relation(fields: [userId], references: [id])
   questions   Question[]
   Historic    Historic[]
-  Like        Like[]
 
   @@map("quizzies")
 }
@@ -69,8 +68,11 @@ model Historic {
   id        Int      @id @default(autoincrement())
   quizId    Int
   playerId  Int
+  likeId    Int
   createdAt DateTime @default(now())
   quiz      Quiz     @relation(fields: [quizId], references: [id])
+  user      User     @relation(fields: [playerId], references: [id])
+  like      Like     @relation(fields: [likeId], references: [id])
   answers   Answer[]
 
   @@map("historic")
@@ -83,19 +85,16 @@ model Answer {
   response   String
   createdAt  DateTime @default(now())
   question   Question @relation(fields: [questionId], references: [id])
-  historic   Historic @relation(fields: [historicId], references: [id])
+  historic   Historic @relation(fields: [historicId], references: [id], onDelete: Cascade)
 
   @@map("answers")
 }
 
 model Like {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  quizId     Int
-  likeStatus Boolean
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id])
-  quiz       Quiz     @relation(fields: [quizId], references: [id])
+  id         Int        @id @default(autoincrement())
+  likeStatus Boolean?
+  createdAt  DateTime   @default(now())
+  historic   Historic[]
 
   @@map("likes")
 }

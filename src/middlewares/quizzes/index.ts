@@ -1,4 +1,4 @@
-import { IObjRegisterAnswer } from '@/interfaces/quizzes'
+import { IHistoricBody } from '@/interfaces/quizzes'
 import { quizzesRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { NextFunction, Request, Response } from 'express'
@@ -9,7 +9,7 @@ const validateNotFound = async (
   next: NextFunction,
 ) => {
   const { idParams } = response.locals
-  const { quizId, answers }: IObjRegisterAnswer = request.body
+  const { quizId, answers }: IHistoricBody = request.body
 
   const id = idParams ?? quizId
 
@@ -33,7 +33,6 @@ const validateConflict = async (
   next: NextFunction,
 ) => {
   const newQuiz = request.body
-
   if (!newQuiz) throw errorFactory.unprocessableEntity(['Quiz inexistent'])
 
   // const isRegisteredQuiz = await quizzesRepository.getById(newQuiz.id)

@@ -20,9 +20,10 @@ interface IAnswer {
   answer: string
 }
 
-interface IObjRegisterAnswer {
+interface IHistoricBody {
   quizId: number
   answers: IAnswer[]
+  isLiked: boolean | null
 }
 
-export { INewQuiz, IQuiz, NewQuestion, IAnswer, IObjRegisterAnswer }
+export { INewQuiz, IQuiz, NewQuestion, IAnswer, IHistoricBody }

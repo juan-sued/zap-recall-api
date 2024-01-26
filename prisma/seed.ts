@@ -1,7 +1,7 @@
 import { Category, Difficulty, PrismaClient, Quiz, User } from '@prisma/client';
-import bcrypt from 'bcrypt';
 import { loadEnv } from '../src/config';
 import { quizzesInterfaces } from '../src/interfaces';
+import bcrypt from 'bcrypt';
 
 
 const prisma = new PrismaClient()
@@ -137,6 +137,9 @@ main()
 
 
   async function cleanDB(){
+    await prisma.like.deleteMany()
+    await prisma.historic.deleteMany()
+    await prisma.answer.deleteMany()
     await prisma.question.deleteMany()
     await prisma.quiz.deleteMany()
     await prisma.category.deleteMany()

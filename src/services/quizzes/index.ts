@@ -1,12 +1,15 @@
 import { prisma } from '@/config'
-import { IAnswer, INewQuiz } from '@/interfaces/quizzes'
+import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import {
   answersRepository,
   historicRepository,
+  likesRepository,
   quizzesRepository,
 } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
+import { Request, Response } from 'express'
+import { decodedToken } from '../auth/jwtToken'
 
 async function insert(
   {
@@ -74,12 +77,38 @@ async function getByTitle(title: string): Promise<Quiz[]> {
   return quizzes
 }
 
-async function getById(id: number): Promise<Partial<Quiz>> {
-  const quiz = await quizzesRepository.getById(id)
+interface IGetById {
+  request: Request
+  idParams: number
+}
 
+async function getById({
+  request,
+  idParams,
+}: IGetById): Promise<Partial<Quiz>> {
+  const quiz = await quizzesRepository.getById(idParams)
   if (!quiz) throw errorFactory.notFound('quiz')
 
-  return quiz
+  const quizWithLike: any = { ...quiz, isLiked: null }
+
+  const authHeader = request.header('Authorization')
+
+  if (authHeader) {
+    const token = authHeader.split(' ')[1]
+    if (!token) throw errorFactory.unauthorized('token')
+
+    const payload = await decodedToken(token)
+
+    const userId = payload.id
+
+    const liked = await likesRepository.getLikeByQuizIdAndPlayerId({
+      playerId: userId,
+      quizId: quiz.id,
+    })
+
+    if (liked) quizWithLike.isLiked = liked.like.likeStatus
+  }
+  return quizWithLike
 }
 
 async function exclude(id: number) {
@@ -88,20 +117,35 @@ async function exclude(id: number) {
 
 // answer
 
-interface IRegisterHistoricService {
-  quizId: number | null
-  playerId: number | null
-  answers: IAnswer[]
+interface IInsertHistoricService extends IHistoricBody {
+  playerId: number
 }
 
 async function insertHistoric({
   quizId,
   playerId,
   answers,
-}: IRegisterHistoricService) {
+  isLiked,
+}: IInsertHistoricService) {
+  // valida se existe histico onde o likeStatus !== null  -> ja deu like nesse quiz
+  const isQuizLiked = await likesRepository.getLikeByQuizIdAndPlayerId({
+    playerId,
+    quizId,
+  })
+  let likeId: number | null = null
+
+  if (isQuizLiked) {
+    likeId = isQuizLiked.like.id
+  } else {
+    const like = await likesRepository.insert({
+      likeStatus: isLiked,
+    })
+    likeId = like.id
+  }
   const historic = await historicRepository.insert({
     playerId,
     quizId,
+    likeId,
   })
 
   for (const answerUnit of answers) {
@@ -135,8 +179,19 @@ async function getAllHistoricByUser(playerId: number) {
 
   return historic
 }
+async function getLikesByAuthor(userId: number) {
+  const likes = await likesRepository.getLikesByAuthorId(userId)
 
-const historic = { insertHistoric }
+  if (!likes) throw errorFactory.notFound('Like')
+
+  return likes
+}
+const historic = {
+  insertHistoric,
+  getHistoricById,
+  getAllHistoricByUser,
+  getLikesByAuthor,
+}
 
 const quiz = {
   exclude,
@@ -145,8 +200,6 @@ const quiz = {
   getByTitle,
   insert,
   incrementAttempt,
-  getHistoricById,
-  getAllHistoricByUser,
 }
 
 export { quiz, historic }
