@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
+import { INewQuiz, IHistoricBody, IMetaData } from '@/interfaces/quizzes'
 import {
   answersRepository,
   historicRepository,
@@ -8,7 +8,7 @@ import {
 } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { Category, Quiz } from '@prisma/client'
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { decodedToken } from '../auth/jwtToken'
 
 async function insert(
@@ -172,25 +172,66 @@ async function getHistoricById(id: string) {
   return historic
 }
 
-async function getAllHistoricByUser(playerId: number) {
-  const historic = await historicRepository.getAllByUser(playerId)
+async function getHistoricByPlayer(playerId: number) {
+  const historic = await historicRepository.getAllByPlayerId(playerId)
 
   if (!historic) throw errorFactory.notFound('Historic')
 
   return historic
 }
-async function getLikesByAuthor(userId: number) {
+async function getHistoricByAuthor(userId: number) {
   const likes = await likesRepository.getLikesByAuthorId(userId)
 
   if (!likes) throw errorFactory.notFound('Like')
 
   return likes
 }
+
+async function getHistoricMetaData(userId: number): Promise<IMetaData> {
+  const historicList = await getHistoricByAuthor(userId)
+  if (!historicList.length) throw errorFactory.notFound('Historic')
+
+  const historicLikedsList = historicList.filter(
+    (historic) => historic.like.likeStatus === true,
+  )
+  const historicDislikedsList = historicList.filter(
+    (historic) => historic.like.likeStatus === false,
+  )
+
+  const averageLikes =
+    historicList.length > 0
+      ? historicLikedsList.length / historicList.length
+      : 0
+
+  const averageDislikes =
+    historicList.length > 0
+      ? historicDislikedsList.length / historicList.length
+      : 0
+  const likes = {
+    totalLikes: historicLikedsList.length,
+    averageLikes: Number(averageLikes.toFixed(2)),
+
+    totalDislikes: historicDislikedsList.length,
+    averageDislikes: Number(averageDislikes.toFixed(2)),
+  }
+
+  const zaps = {
+    totalCompletion: 0,
+    averageCompletion: 0,
+  }
+
+  return {
+    likes,
+    zaps,
+  }
+}
+
 const historic = {
   insertHistoric,
   getHistoricById,
-  getAllHistoricByUser,
-  getLikesByAuthor,
+  getHistoricByPlayer,
+  getHistoricByAuthor,
+  getHistoricMetaData,
 }
 
 const quiz = {

@@ -26,4 +26,19 @@ interface IHistoricBody {
   isLiked: boolean | null
 }
 
-export { INewQuiz, IQuiz, NewQuestion, IAnswer, IHistoricBody }
+interface ILikeMetaData {
+  totalLikes: number
+  averageLikes: number
+  totalDislikes: number
+  averageDislikes: number
+}
+interface IZapMetaData {
+  totalCompletion: number
+  averageCompletion: number
+}
+interface IMetaData {
+  likes: ILikeMetaData
+  zaps: IZapMetaData
+}
+
+export { INewQuiz, IQuiz, NewQuestion, IAnswer, IHistoricBody, IMetaData }

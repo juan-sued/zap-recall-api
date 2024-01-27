@@ -34,7 +34,7 @@ async function getById(historicId: number) {
 
   return historic
 }
-async function getAllByUser(playerId: number) {
+async function getAllByPlayerId(playerId: number) {
   const historic = await prisma.historic.findMany({
     where: {
       playerId,
@@ -48,4 +48,22 @@ async function getAllByUser(playerId: number) {
 
   return historic
 }
-export { insert, getAllByUser, getById }
+async function getAllByAuthor(userId: number) {
+  const historic = await prisma.historic.findMany({
+    where: {
+      quiz: {
+        userId,
+      },
+    },
+    select: {
+      id: true,
+      quiz: true,
+      like: true,
+      createdAt: true,
+    },
+  })
+
+  return historic
+}
+
+export { insert, getAllByPlayerId, getById, getAllByAuthor }
