@@ -49,6 +49,11 @@ async function getLikesByAuthorId(userId: number) {
       quiz: {
         userId,
       },
+      like: {
+        likeStatus: {
+          not: null,
+        },
+      },
     },
     select: {
       like: true,

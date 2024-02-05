@@ -20,8 +20,7 @@ quizzesRouter
     quizzesController.quiz.get,
   )
   .post(
-    '/attempts/:id',
-    sharedMiddleware.validateIdParams,
+    '/attempts/',
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.incrementAttempt,
   )
@@ -51,12 +50,14 @@ quizzesRouter
     quizzesMiddleware.validateNotFound,
     quizzesController.historic.insertHistoric,
   )
-  .get('/historic', quizzesController.historic.getHistoric)
+  .get('/historic/player', quizzesController.historic.getHistoricByAuthor)
+  .get('/historic/author', quizzesController.historic.getHistoricByAuthor)
+  .get('/historic/meta-data', quizzesController.historic.getHistoricMetaData)
+
   .get(
     '/historic/id/:id',
     sharedMiddleware.validateIdParams,
-    quizzesController.historic.getHistoric,
+    quizzesController.historic.getHistoricByAuthor,
   )
-  .get('/historic/likes', quizzesController.historic.getHistoricLikes)
 
 export { quizzesRouter }

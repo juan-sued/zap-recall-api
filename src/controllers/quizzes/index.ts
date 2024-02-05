@@ -1,8 +1,9 @@
 import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import { quizzesService } from '@/services'
+import { TIncrementAttempt } from '@/services/quizzes'
 import { errorFactory } from '@/utils'
 import { Quiz } from '@prisma/client'
-import { Request, Response, response } from 'express'
+import { Request, Response } from 'express'
 
 async function insert(request: Request, response: Response) {
   const newQuiz: INewQuiz = request.body
@@ -47,39 +48,46 @@ async function insertHistoric(request: Request, response: Response) {
     playerId: userId,
     isLiked,
   })
-  await quizzesService.quiz.incrementAttempt(quizId)
 
   response.sendStatus(201)
 }
 
 async function incrementAttempt(request: Request, response: Response) {
-  const { quiz } = response.locals
+  const { quizId, answers }: TIncrementAttempt = request.body
 
-  await quizzesService.quiz.incrementAttempt(quiz.id)
+  await quizzesService.quiz.incrementAttempt({ answers, quizId })
 
   response.sendStatus(200)
 }
 
-async function getHistoric(request: Request, response: Response) {
-  const { id } = request.params
+async function getHistoricByAuthor(request: Request, response: Response) {
   const { userId } = response.locals
 
-  let result: any = null
-
-  if (id) {
-    result = await quizzesService.historic.getHistoricById(id)
-  } else {
-    result = await quizzesService.historic.getAllHistoricByUser(userId)
-  }
+  const result = await quizzesService.historic.getHistoricByAuthor(userId)
 
   response.send(result).status(200)
 }
-async function getHistoricLikes(request: Request, response: Response) {
+
+async function getHistoricByPlay(request: Request, response: Response) {
   const { userId } = response.locals
 
-  const result = await quizzesService.historic.getLikesByAuthor(userId)
+  const result = await quizzesService.historic.getHistoricByPlayer(userId)
 
   response.send(result).status(200)
+}
+
+async function getHistoricById(request: Request, response: Response) {
+  const { idParams } = response.locals
+  const result = await quizzesService.historic.getHistoricById(idParams)
+
+  response.send(result).status(200)
+}
+
+async function getHistoricMetaData(request: Request, response: Response) {
+  const { userId } = response.locals
+  const metaData = await quizzesService.historic.getHistoricMetaData(userId)
+
+  response.send(metaData).status(200)
 }
 
 const quiz = {
@@ -91,8 +99,10 @@ const quiz = {
 
 const historic = {
   insertHistoric,
-  getHistoric,
-  getHistoricLikes,
+  getHistoricByAuthor,
+  getHistoricByPlay,
+  getHistoricById,
+  getHistoricMetaData,
 }
 
 export { quiz, historic }
