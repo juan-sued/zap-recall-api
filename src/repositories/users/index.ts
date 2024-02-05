@@ -27,15 +27,20 @@ function getByEmail(email: string) {
   return prisma.user.findUnique(params)
 }
 
-async function getById(id: number): Promise<User> {
+async function getById(id: number): Promise<Omit<User, 'password'> | null> {
   const user = await prisma.user.findUnique({
     where: {
       id,
     },
-    include: {},
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   })
-
-  delete user.password
   return user
 }
 

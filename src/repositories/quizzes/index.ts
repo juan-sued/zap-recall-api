@@ -3,8 +3,23 @@ import { Prisma, Quiz } from '@prisma/client'
 
 function getAll(): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
-    include: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
       category: true,
+      difficulty: true,
+      attempts: true,
+      endings: true,
+      createdAt: true,
+      updatedAt: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
     },
   }
 
@@ -83,7 +98,15 @@ async function exclude(id: number) {
 
 //= ================== ANSWERS ========================//
 
-async function incrementAttempt(quizId: number) {
+interface IIncrementAttemptRepository {
+  isFinishedWin: boolean
+  quizId: number
+}
+
+async function incrementAttempt({
+  isFinishedWin,
+  quizId,
+}: IIncrementAttemptRepository) {
   await prisma.quiz.update({
     where: {
       id: quizId,
@@ -91,6 +114,9 @@ async function incrementAttempt(quizId: number) {
     data: {
       attempts: {
         increment: 1,
+      },
+      endings: {
+        increment: isFinishedWin ? 1 : 0,
       },
     },
   })

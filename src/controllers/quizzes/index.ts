@@ -1,5 +1,6 @@
 import { INewQuiz, IHistoricBody } from '@/interfaces/quizzes'
 import { quizzesService } from '@/services'
+import { TIncrementAttempt } from '@/services/quizzes'
 import { errorFactory } from '@/utils'
 import { Quiz } from '@prisma/client'
 import { Request, Response } from 'express'
@@ -47,15 +48,14 @@ async function insertHistoric(request: Request, response: Response) {
     playerId: userId,
     isLiked,
   })
-  await quizzesService.quiz.incrementAttempt(quizId)
 
   response.sendStatus(201)
 }
 
 async function incrementAttempt(request: Request, response: Response) {
-  const { quiz } = response.locals
+  const { quizId, answers }: TIncrementAttempt = request.body
 
-  await quizzesService.quiz.incrementAttempt(quiz.id)
+  await quizzesService.quiz.incrementAttempt({ answers, quizId })
 
   response.sendStatus(200)
 }

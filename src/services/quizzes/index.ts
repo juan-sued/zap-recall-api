@@ -34,7 +34,7 @@ async function insert(
     categoryId = category.id
   }
 
-  const quiz: Omit<Quiz, 'id'> = {
+  const quiz: Omit<Quiz, 'id' | 'createdAt' | 'updatedAt'> = {
     title,
     description,
     difficulty,
@@ -156,11 +156,19 @@ async function insertHistoric({
       historicId: historic.id,
     })
   }
+  await incrementAttempt({ answers, quizId })
 
   // criar um answer para cada resposta
 }
-async function incrementAttempt(quizId: number) {
-  await quizzesRepository.incrementAttempt(quizId)
+
+export type TIncrementAttempt = Omit<IHistoricBody, 'isLiked'>
+
+async function incrementAttempt({ answers, quizId }: TIncrementAttempt) {
+  const answersZaps = answers.filter((answer) => answer.answer === 'zap')
+
+  const isFinishedWin = answersZaps.length === answers.length
+
+  await quizzesRepository.incrementAttempt({ isFinishedWin, quizId })
 }
 
 async function getHistoricById(id: string) {

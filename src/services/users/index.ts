@@ -26,7 +26,7 @@ async function getByName(
 async function getById(
   id: number,
 ): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
-  const user: User = await usersRepository.getById(id)
+  const user = await usersRepository.getById(id)
   return user
 }
 

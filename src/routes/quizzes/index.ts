@@ -20,8 +20,7 @@ quizzesRouter
     quizzesController.quiz.get,
   )
   .post(
-    '/attempts/:id',
-    sharedMiddleware.validateIdParams,
+    '/attempts/',
     quizzesMiddleware.validateNotFound,
     quizzesController.quiz.incrementAttempt,
   )
