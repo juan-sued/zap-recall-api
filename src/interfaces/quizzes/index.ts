@@ -32,9 +32,24 @@ interface ILikeMetaData {
   totalDislikes: number
   averageDislikes: number
 }
+
+interface IChampionZap {
+  quiz: Partial<Quiz>
+  percentConclusion: number
+  totalLikes: number
+}
+
+interface IPlayersPerMonth {
+  name: string
+  total: number
+}
 interface IZapMetaData {
-  totalCompletion: number
+  totalZaps: number
   averageCompletion: number
+  championZap: IChampionZap
+  recentsCreatedZaps: Partial<Quiz>[]
+  playersCount: number
+  playersPerMonth: IPlayersPerMonth[]
 }
 interface IMetaData {
   likes: ILikeMetaData
