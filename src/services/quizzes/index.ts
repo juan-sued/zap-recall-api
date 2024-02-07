@@ -82,6 +82,10 @@ interface IGetById {
   idParams: number
 }
 
+interface IQuizWithLike extends Partial<Quiz> {
+  isLiked: boolean
+}
+
 async function getById({
   request,
   idParams,
@@ -89,7 +93,7 @@ async function getById({
   const quiz = await quizzesRepository.getById(idParams)
   if (!quiz) throw errorFactory.notFound('quiz')
 
-  const quizWithLike: any = { ...quiz, isLiked: null }
+  const quizWithLike: IQuizWithLike = { ...quiz, isLiked: null }
 
   const authHeader = request.header('Authorization')
 
@@ -188,44 +192,117 @@ async function getHistoricByPlayer(playerId: number) {
   return historic
 }
 async function getHistoricByAuthor(userId: number) {
-  const likes = await likesRepository.getLikesByAuthorId(userId)
+  const historic = await historicRepository.getAllByAuthor(userId)
 
-  if (!likes) throw errorFactory.notFound('Like')
+  if (!historic) throw errorFactory.notFound('Historic')
 
-  return likes
+  return historic
 }
 
 async function getHistoricMetaData(userId: number): Promise<IMetaData> {
   const historicList = await getHistoricByAuthor(userId)
-  if (!historicList.length) throw errorFactory.notFound('Historic')
 
   const historicLikedsList = historicList.filter(
     (historic) => historic.like.likeStatus === true,
   )
+
+  // Pega o quiz mais curtido
+  const mostPresentQuiz = historicLikedsList.reduce(
+    (mostPresent, historic) => {
+      const currentQuizId = historic.quiz.id
+      const currentOccurrences = historicLikedsList.filter(
+        (h) => h.quiz.id === currentQuizId,
+      ).length
+
+      if (currentOccurrences > mostPresent.occurrences) {
+        return {
+          quiz: historic.quiz,
+          occurrences: currentOccurrences,
+        }
+      } else {
+        return mostPresent
+      }
+    },
+    { quiz: null, occurrences: 0 },
+  )
+
   const historicDislikedsList = historicList.filter(
     (historic) => historic.like.likeStatus === false,
   )
 
-  const averageLikes =
-    historicList.length > 0
-      ? historicLikedsList.length / historicList.length
-      : 0
+  const allZaps = await quizzesRepository.getAllByAuthorId(userId)
+  const totalEndings: number = allZaps.reduce(
+    (accumulator, zap) => accumulator + zap.endings,
+    0,
+  )
+  const avarageCompletion = Math.round(totalEndings / allZaps.length)
 
-  const averageDislikes =
-    historicList.length > 0
-      ? historicDislikedsList.length / historicList.length
-      : 0
+  const avarageLikes = Math.round(historicLikedsList.length / allZaps.length)
+  const avarageDislikes = Math.round(
+    historicDislikedsList.length / allZaps.length,
+  )
+  const percentConclusion = Math.round(
+    (mostPresentQuiz.quiz.endings / mostPresentQuiz.quiz.attempts) * 100,
+  )
   const likes = {
     totalLikes: historicLikedsList.length,
-    averageLikes: Number(averageLikes.toFixed(2)),
+    averageLikes: isNaN(avarageLikes) ? 0 : avarageLikes,
 
     totalDislikes: historicDislikedsList.length,
-    averageDislikes: Number(averageDislikes.toFixed(2)),
+    averageDislikes: isNaN(avarageDislikes) ? 0 : avarageDislikes,
   }
 
+  const monthNames: string[] = [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Abr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Set',
+    'Out',
+    'Nov',
+    'Dez',
+  ]
+
+  interface MonthlyTotal {
+    name: string
+    total: number
+  }
+
+  const monthlyTotals: Record<string, number> = {}
+
+  for (const historic of historicList) {
+    const monthName: string = monthNames[historic.createdAt.getMonth()]
+
+    if (!monthlyTotals[monthName]) {
+      monthlyTotals[monthName] = 1
+    } else {
+      monthlyTotals[monthName]++
+    }
+  }
+
+  // Converter o objeto em um array
+  const monthlyTotalsArray: MonthlyTotal[] = monthNames.map(
+    (monthName: string) => ({
+      name: monthName,
+      total: monthlyTotals[monthName] || 0,
+    }),
+  )
+
   const zaps = {
-    totalCompletion: 0,
-    averageCompletion: 0,
+    totalZaps: allZaps.length,
+    averageCompletion: isNaN(avarageCompletion) ? 0 : avarageCompletion,
+    championZap: {
+      quiz: mostPresentQuiz.quiz,
+      percentConclusion,
+      totalLikes: mostPresentQuiz.occurrences,
+    },
+    playersPerMonth: monthlyTotalsArray,
+    playersCount: historicList.length,
+    recentsCreatedZaps: allZaps,
   }
 
   return {

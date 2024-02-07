@@ -57,7 +57,18 @@ async function getAllByAuthor(userId: number) {
     },
     select: {
       id: true,
-      quiz: true,
+      quiz: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          category: true,
+          attempts: true,
+          difficulty: true,
+          endings: true,
+        },
+      },
+      playerId: true,
       like: true,
       createdAt: true,
     },

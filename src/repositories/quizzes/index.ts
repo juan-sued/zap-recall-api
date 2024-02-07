@@ -71,6 +71,27 @@ async function getById(id: number): Promise<QuizWithQuestions> {
   return quiz as QuizWithQuestions
 }
 
+async function getAllByAuthorId(authorId: number): Promise<Partial<Quiz>[]> {
+  const quiz = await prisma.quiz.findMany({
+    where: {
+      userId: authorId,
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      attempts: true,
+      endings: true,
+      difficulty: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  })
+
+  return quiz
+}
+
 function getByFilterTitle(name: string): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
     where: {
@@ -122,4 +143,12 @@ async function incrementAttempt({
   })
 }
 
-export { exclude, getAll, getByFilterTitle, getById, insert, incrementAttempt }
+export {
+  exclude,
+  getAll,
+  getByFilterTitle,
+  getById,
+  insert,
+  incrementAttempt,
+  getAllByAuthorId,
+}
