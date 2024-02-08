@@ -205,7 +205,6 @@ async function getHistoricMetaData(userId: number): Promise<IMetaData> {
   const historicLikedsList = historicList.filter(
     (historic) => historic.like.likeStatus === true,
   )
-
   // Pega o quiz mais curtido
   const mostPresentQuiz = historicLikedsList.reduce(
     (mostPresent, historic) => {
@@ -225,25 +224,29 @@ async function getHistoricMetaData(userId: number): Promise<IMetaData> {
     },
     { quiz: null, occurrences: 0 },
   )
-
   const historicDislikedsList = historicList.filter(
     (historic) => historic.like.likeStatus === false,
   )
 
   const allZaps = await quizzesRepository.getAllByAuthorId(userId)
+
   const totalEndings: number = allZaps.reduce(
     (accumulator, zap) => accumulator + zap.endings,
     0,
   )
   const avarageCompletion = Math.round(totalEndings / allZaps.length)
-
   const avarageLikes = Math.round(historicLikedsList.length / allZaps.length)
   const avarageDislikes = Math.round(
     historicDislikedsList.length / allZaps.length,
   )
-  const percentConclusion = Math.round(
-    (mostPresentQuiz.quiz.endings / mostPresentQuiz.quiz.attempts) * 100,
-  )
+
+  const percentConclusion =
+    !mostPresentQuiz.quiz || mostPresentQuiz.quiz.attempts === 0
+      ? 0
+      : Math.round(
+          (mostPresentQuiz.quiz.endings / mostPresentQuiz.quiz.attempts) * 100,
+        )
+
   const likes = {
     totalLikes: historicLikedsList.length,
     averageLikes: isNaN(avarageLikes) ? 0 : avarageLikes,
@@ -291,10 +294,11 @@ async function getHistoricMetaData(userId: number): Promise<IMetaData> {
       total: monthlyTotals[monthName] || 0,
     }),
   )
-
   const zaps = {
     totalZaps: allZaps.length,
-    averageCompletion: isNaN(avarageCompletion) ? 0 : avarageCompletion,
+    averageCompletion: isNaN(avarageCompletion)
+      ? 0
+      : Math.round(avarageCompletion * 100),
     championZap: {
       quiz: mostPresentQuiz.quiz,
       percentConclusion,
