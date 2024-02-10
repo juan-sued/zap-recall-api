@@ -1,5 +1,5 @@
 import { prisma } from '@/config'
-import { Prisma, Quiz } from '@prisma/client'
+import { Difficulty, Prisma, Quiz } from '@prisma/client'
 
 function getAll(): Promise<Quiz[]> {
   const params: Prisma.QuizFindManyArgs = {
@@ -117,6 +117,21 @@ async function exclude(id: number) {
   await prisma.quiz.delete({ where: { id } })
 }
 
+interface IUpdateDifficulty {
+  id: number
+  difficulty: Difficulty
+}
+async function updateDifficulty({ id, difficulty }: IUpdateDifficulty) {
+  await prisma.quiz.update({
+    where: {
+      id,
+    },
+    data: {
+      difficulty,
+    },
+  })
+}
+
 //= ================== ANSWERS ========================//
 
 interface IIncrementAttemptRepository {
@@ -151,4 +166,5 @@ export {
   insert,
   incrementAttempt,
   getAllByAuthorId,
+  updateDifficulty,
 }
