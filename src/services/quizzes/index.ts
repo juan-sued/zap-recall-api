@@ -160,9 +160,36 @@ async function insertHistoric({
       historicId: historic.id,
     })
   }
+
   await incrementAttempt({ answers, quizId })
 
-  // criar um answer para cada resposta
+  const zap = await quizzesRepository.getById(quizId)
+
+  const avarageCompletion = Math.round((zap.endings / zap.attempts) * 100)
+
+  console.log('a porcentagem de finalizações é ' + avarageCompletion + '%')
+  // verificar porcentagem do quiz e ajustar a difficult dele
+
+  if (avarageCompletion > 70 && zap.difficulty !== 'EASY') {
+    await quizzesRepository.updateDifficulty({
+      id: quizId,
+      difficulty: 'EASY',
+    })
+  } else if (
+    avarageCompletion < 70 &&
+    avarageCompletion > 30 &&
+    zap.difficulty !== 'MEDIUM'
+  ) {
+    await quizzesRepository.updateDifficulty({
+      id: quizId,
+      difficulty: 'MEDIUM',
+    })
+  } else if (avarageCompletion < 30 && zap.difficulty !== 'HARD') {
+    await quizzesRepository.updateDifficulty({
+      id: quizId,
+      difficulty: 'HARD',
+    })
+  }
 }
 
 export type TIncrementAttempt = Omit<IHistoricBody, 'isLiked'>
