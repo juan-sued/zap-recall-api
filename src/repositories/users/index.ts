@@ -1,16 +1,18 @@
 import { prisma } from '@/config'
-import { authInterfaces } from '@/interfaces'
-import { UpdateUserData, UsersBasic } from '@/interfaces/users'
+import { authInterfaces, usersInterfaces } from '@/interfaces'
+import { UpdateUserData } from '@/interfaces/users'
 import { errorFactory } from '@/utils'
 import { Prisma, User } from '@prisma/client'
 
 //= ================== GET =====================//
 
-async function getAll(): Promise<UsersBasic[]> {
+async function getAll(): Promise<usersInterfaces.IUserBasic[]> {
   const users = await prisma.user.findMany({
     select: {
       id: true,
       name: true,
+      email: true,
+      createdAt: true,
     },
   })
 
@@ -44,13 +46,19 @@ async function getById(id: number): Promise<Omit<User, 'password'> | null> {
   return user
 }
 
-function getByFilterName(name: string): Promise<UsersBasic[]> {
+function getByFilterName(name: string): Promise<usersInterfaces.IUserBasic[]> {
   const params: Prisma.UserFindManyArgs = {
     where: {
       name: {
         startsWith: `${name}`,
         mode: 'insensitive',
       },
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
     },
     skip: 0,
     take: undefined,

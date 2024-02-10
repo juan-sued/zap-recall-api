@@ -1,32 +1,26 @@
 import { usersInterfaces } from '@/interfaces'
-import { UpdateUserData, UsersBasic } from '@/interfaces/users'
+import { UpdateUserData } from '@/interfaces/users'
 import { usersRepository } from '@/repositories'
 import { errorFactory } from '@/utils'
 import { User } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
-async function getAllUsers(): Promise<usersInterfaces.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getAll()
+async function getAllUsers(): Promise<usersInterfaces.IUserBasic[]> {
+  const users = await usersRepository.getAll()
 
-  return {
-    users,
-  }
+  return users
 }
 
-async function getByName(
-  name: string,
-): Promise<usersInterfaces.ResponseAllUsers> {
-  const users: UsersBasic[] = await usersRepository.getByFilterName(name)
+async function getByName(name: string): Promise<usersInterfaces.IUserBasic[]> {
+  const users: usersInterfaces.IUserBasic[] =
+    await usersRepository.getByFilterName(name)
 
-  return {
-    users,
-  }
+  return users
 }
 
-async function getById(
-  id: number,
-): Promise<Omit<User, 'id' | 'password' | 'updatedAt'>> {
+async function getById(id: number): Promise<Omit<User, 'password'>> {
   const user = await usersRepository.getById(id)
+  if (!user) throw errorFactory.notFound('User')
   return user
 }
 
