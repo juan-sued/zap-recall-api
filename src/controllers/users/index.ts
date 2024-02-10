@@ -1,13 +1,12 @@
-import { ResponseAllUsers } from '@/interfaces/users'
+import { resultGetUsers } from '@/interfaces/users'
 import { usersService } from '@/services'
 import { errorFactory } from '@/utils'
-import { User } from '@prisma/client'
 import { Request, Response } from 'express'
 
 async function get(request: Request, response: Response) {
   const { name } = request.query as Record<string, string>
   const { idParams } = response.locals
-  let result: ResponseAllUsers | Omit<User, 'id' | 'password' | 'updatedAt'>
+  let result: resultGetUsers
 
   if (name) result = await usersService.getByName(name)
 

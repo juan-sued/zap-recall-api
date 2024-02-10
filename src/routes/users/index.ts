@@ -11,8 +11,8 @@ import { Router } from 'express'
 const usersRouter = Router()
 
 usersRouter
-  .all('*', authMiddleware.validateJwtToken)
   .get('/', usersController.get)
+  .all('*', authMiddleware.validateJwtToken)
   .get('/:id', sharedMiddleware.validateIdParams, usersController.get)
   .patch(
     '/',

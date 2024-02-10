@@ -2,13 +2,16 @@ import { User } from '@prisma/client'
 
 //= =================== user ==================
 
-type UsersBasic = Pick<User, 'id' | 'name'>
+//= ================ update ====================
 
-interface ResponseAllUsers {
-  users: UsersBasic[]
+interface IUserBasic {
+  id: number
+  name: string
+  email: string
+  createdAt: Date
 }
 
-//= ================ update ====================
+type resultGetUsers = IUserBasic[] | Omit<User, 'password'>
 
 interface UpdateUserData {
   name?: string
@@ -19,4 +22,4 @@ interface UpdateUserData {
   password?: string
 }
 
-export { ResponseAllUsers, UpdateUserData, UsersBasic }
+export { UpdateUserData, resultGetUsers, IUserBasic }
