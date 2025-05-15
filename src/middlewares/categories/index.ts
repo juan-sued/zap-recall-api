@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from 'express'
 const validateConflict = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { title } = request.body
   if (!title) throw errorFactory.unprocessableEntity(['Title inexistent'])
@@ -21,7 +21,7 @@ const validateConflict = async (
 const validateNotFound = async (
   request: Request,
   response: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { idParams } = response.locals
 
